@@ -105,7 +105,7 @@ export default {
   if(!["GET","HEAD"].includes(request.method))return json({error:"method_not_allowed"},405,origin);
   if(url.pathname==="/health")return json({service:"knowledge-center-updates",version:"1.1.0",schedule:"0-26 0 * * *",timezone:"Asia/Kuala_Lumpur",localWindow:"08:00–08:26 daily",chapters:CHAPTERS.length,mode:"daily_and_manual_reference_checks",manualRefresh:true,editorialRewrite:false},200,origin);
   if(url.pathname==="/v1/chapters")return json({chapters:CHAPTERS.map(({id,title,group,order})=>({id,title,group,minute:order}))},200,origin);
-  const reviewMatch=url.pathname.match(/^\\/v1\\/reviews\\/([a-z0-9-]+)$/);
+  const reviewMatch=url.pathname.match(/^\/v1\/reviews\/([a-z0-9-]+)$/);
   if(reviewMatch){
    const chapter=CHAPTERS.find(item=>item.id===reviewMatch[1]);
    if(!chapter)return json({error:"not_found"},404,origin);
