@@ -1,5 +1,15 @@
 # MASTER AI - Knowledge Center
 
+## Daily reference updater and learning paths
+
+The knowledge center has twenty-six distinct standalone chapters, plus the index alias. Chapters are organized into Foundations, Application Platform, AI Engineering, Operations & Quality, and Implementation Chapters. Each chapter has explicit related topics, mapped official references and a Daily Reference Updates panel.
+
+- [Worker Architecture & Implementation](worker-implementation.html)
+- [Daily update operations guide](docs/DAILY_UPDATES.md)
+- [Versioned chapter registry](config/chapters.json)
+
+The Cloudflare Worker knowledge-center-updates checks each chapter once daily between 08:00 and 08:25 Malaysia time. It updates source-evidence panels; it does not silently rewrite technical prose or code. Actual source results remain pending until a real scheduled check completes. The complete narrative remains readable without the update service.
+
 A static, searchable development playbook hosted with GitHub Pages. This application is a documentation reader. The agents, integrations, metrics and pricing described in the playbook are reference examples, not running services or measured results.
 
 Custom domain: https://app-bible.jelvan.pro  

@@ -40,3 +40,10 @@ Structural checks passed on all twenty-six HTML documents during this review. Th
 ## Maintenance
 
 Update the HTML and matching search-index entry together. The search coverage check detects missing chapter records, but semantic freshness requires review. Maintain previous/next links and page outlines when adding sections. Private information must not be placed in HTML or the search index. Remove superseded renderer assets only after confirming no active HTML references them.
+
+
+## Daily source updater — 3 November 2026
+
+The site now has twenty-six distinct chapters and twenty-seven HTML documents including the overview alias. A separate Cloudflare Worker, knowledge-center-updates, binds an isolated KV namespace and checks registered references daily. The API serves public source-outline evidence to assets/daily-updates.js; it does not power sign-in, inference, email or business-data storage. The reader remains complete static HTML. See [Daily Updates](DAILY_UPDATES.md) for the exact comparison scope, schedule, state semantics, tests and deployment boundary.
+
+Navigation grouping and related links are specified in config/chapters.json. scripts/build_search.py indexes entire articles, including nested technical cards. Publishing now validates the embedded Worker registry, daily schedule, source bounds, search freshness and updater unit tests.

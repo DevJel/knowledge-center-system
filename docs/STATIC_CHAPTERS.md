@@ -27,3 +27,10 @@ Checked: all twenty-four topic files contain all eleven numbered sections; every
 ## Maintenance
 
 Edit the HTML file for the relevant topic directly. Keep metadata and evidence current; update references when provider contracts change. Use the same numbered organization for new chapters. Keep credentials out of all public files. Run browser checks for long code blocks, mobile navigation, copy controls, diagram failure fallback and script-disabled reading before production approval.
+
+
+## Organization revision — 3 November 2026
+
+All twenty-six distinct chapters retain separate complete HTML. Chapters now include section 12 (prerequisites and topic-specific related chapters) and section 13 (daily reference updates). The index remains an overview alias. Five learning paths organize navigation. The Worker implementation chapter includes the complete deployed updater source, real binding configuration and verification matrix.
+
+Daily evidence updates do not change an editorial review date. Live comparison limits and failure modes are documented in DAILY_UPDATES.md.

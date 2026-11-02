@@ -33,10 +33,18 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Validate chapter registry and daily schedule
+        run: python3 scripts/check_registry.py
+      - name: Verify complete search index
+        run: python3 scripts/build_search.py --check
+      - name: Test reference updater
+        run: node --test workers/knowledge-center-updates/worker.test.mjs
       - name: Validate documentation structure
         run: python3 scripts/check_docs.py .
       - name: Validate enhancement JavaScript
-        run: node --check assets/chapters.js
+        run: |
+          node --check assets/chapters.js
+          node --check assets/daily-updates.js
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
