@@ -80,3 +80,70 @@ async function renderDiagrams(){
   }catch{announce("Diagram previews unavailable; complete Mermaid source remains visible.");}
 }
 renderDiagrams();
+
+
+/* Knowledge Center interactive engineering tools — documentation only, no remote code execution. */
+(function(){
+  const keyPrefix="kc-check-v1:"+location.pathname+":";
+  const article=document.querySelector("article");
+  if(!article)return;
+  // Per-chapter checklists generated from actual verification matrix rows.
+  const acceptance=article.querySelector("#acceptance");
+  if(acceptance){
+    const rows=[...acceptance.querySelectorAll("tbody tr")].slice(0,18);
+    if(rows.length){
+      const field=document.createElement("section");field.className="audit-checklist";field.setAttribute("aria-label","Interactive verification checklist");
+      const title=document.createElement("h3");title.textContent="Interactive verification checklist (this browser only)";
+      const note=document.createElement("p");note.textContent="Progress is saved locally to this browser. Checking an item is not proof of production compliance or deployment approval.";
+      const counter=document.createElement("p");counter.setAttribute("role","status");counter.className="audit-count";
+      const list=document.createElement("div");list.className="audit-items";
+      const boxes=rows.map((tr,i)=>{const label=document.createElement("label"),box=document.createElement("input"),span=document.createElement("span");box.type="checkbox";box.checked=(()=>{try{return localStorage.getItem(keyPrefix+i)==="1"}catch{return false}})();span.textContent=(tr.cells[0]?.textContent||"Verification "+(i+1)).trim();label.append(box,span);list.append(label);box.addEventListener("change",()=>{try{localStorage.setItem(keyPrefix+i,box.checked?"1":"0")}catch{};update()});return box});
+      function update(){counter.textContent=boxes.filter(b=>b.checked).length+" / "+boxes.length+" items marked reviewed"}
+      update();field.append(title,note,counter,list);acceptance.append(field);
+    }
+  }
+  // Code selectors preserve the original snippet; additional language formats are only shown when present.
+  article.querySelectorAll(".code-block").forEach((block,i)=>{
+    const code=block.querySelector("pre code");if(!code||block.closest("#diagram"))return;
+    const source=code.textContent.trim();if(source.length<25)return;
+    const label=block.querySelector(".code-label");
+    const language=/\bwrangler\.toml\b|\[\[d1_databases\]\]|\[vars\]/i.test(source)?"Wrangler TOML":/\bFROM\s+\w+|\bRUN\s+apt-get/m.test(source)?"Docker":/^\s*(\$ |npm |npx |curl |wrangler |git |pnpm )/m.test(source)?"Bash":/\b(const|interface|type|export|async|await)\b/.test(source)?"TypeScript":"Code";
+    const tabs=document.createElement("div");tabs.className="code-switcher";tabs.setAttribute("role","tablist");tabs.setAttribute("aria-label","Available code formats");
+    const button=document.createElement("button");button.type="button";button.setAttribute("role","tab");button.setAttribute("aria-selected","true");button.textContent=language;tabs.append(button);
+    // Only expose a second tab when a validated paired snippet exists in this section.
+    const section=block.closest("section");const others=section?[...section.querySelectorAll(".code-block")].filter(b=>b!==block):[];
+    for(const other of others.slice(0,3)){const peer=other.querySelector("pre code");if(!peer||peer.textContent.trim().length<25)continue;const tag=document.createElement("button");tag.type="button";tag.setAttribute("role","tab");tag.setAttribute("aria-selected","false");tag.textContent=(other.querySelector(".code-label")?.firstChild?.textContent||"Related snippet").trim().slice(0,28)||"Related snippet";tag.onclick=()=>{peer.closest(".code-block").scrollIntoView({behavior:"smooth",block:"center"})};tabs.append(tag)}
+    const verify=document.createElement("button");verify.type="button";verify.textContent="Check snippet";verify.title="Checks for empty content and obvious placeholders; does not run code";verify.onclick=()=>{const placeholders=/\b(TODO|FIXME|YOUR_API_KEY|replace-me|changeme)\b/i.test(source);announce(placeholders?"Review snippet: placeholders found.":"Snippet is nonempty; execution and syntax are not verified.")};tabs.append(verify);
+    block.before(tabs);
+  });
+  // Use explicit user-initiated zoom, without executing SVG scripts.
+  function zoom(svg,label){
+    const dlg=document.createElement("dialog");dlg.className="mermaid-zoom";dlg.setAttribute("aria-label",label||"Architecture diagram");
+    const bar=document.createElement("div");bar.className="zoom-tools";
+    const close=document.createElement("button");close.textContent="Close";close.onclick=()=>dlg.close();
+    const minus=document.createElement("button");minus.textContent="−";const plus=document.createElement("button");plus.textContent="+";
+    const viewport=document.createElement("div");viewport.className="zoom-viewport";const content=document.createElement("div");content.className="zoom-inner";
+    const copy=svg.cloneNode(true);copy.removeAttribute("id");content.append(copy);viewport.append(content);
+    let factor=1;function scale(v){factor=Math.max(.5,Math.min(4,v));content.style.transform="scale("+factor+")"}
+    plus.onclick=()=>scale(factor+.25);minus.onclick=()=>scale(factor-.25);
+    bar.append(minus,plus,close);dlg.append(bar,viewport);document.body.append(dlg);
+    dlg.addEventListener("close",()=>dlg.remove());dlg.showModal();
+  }
+  const observer=new MutationObserver(()=>{article.querySelectorAll(".mermaid-preview:not([data-zoom-ready])").forEach(preview=>{
+    preview.dataset.zoomReady="yes";const btn=document.createElement("button");btn.type="button";btn.className="diagram-zoom-button";btn.textContent="Zoom diagram";btn.onclick=()=>{const svg=preview.querySelector("svg");if(svg)zoom(svg,preview.getAttribute("aria-label"))};preview.before(btn);
+  })});
+  observer.observe(article,{childList:true,subtree:true});
+  article.querySelectorAll(".mermaid-preview").forEach(preview=>{if(!preview.dataset.zoomReady){const btn=document.createElement("button");btn.textContent="Zoom diagram";btn.onclick=()=>zoom(preview.querySelector("svg"),"Architecture");preview.before(btn);preview.dataset.zoomReady="yes"}});
+  // Status is intentionally not inferred from repository commits or doc availability.
+  const sidebar=document.querySelector(".sidebar");
+  if(sidebar){const box=document.createElement("div");box.className="deploy-status";box.innerHTML='<strong>Repository status</strong><p role="status">Checking latest GitHub Actions run…</p><small>Workflow result is not proof that the site is live.</small>';sidebar.append(box);
+    fetch("https://api.github.com/repos/DevJel/knowledge-center-system/actions/runs?per_page=1",{headers:{Accept:"application/vnd.github+json"}}).then(async res=>{if(!res.ok)throw Error("unavailable");const json=await res.json();const run=json.workflow_runs?.[0];if(!run)throw Error("no runs");box.querySelector("p").textContent="Latest workflow: "+(run.conclusion||run.status||"unknown");const a=document.createElement("a");a.href=run.html_url;a.target="_blank";a.rel="noopener noreferrer";a.textContent="View workflow evidence";box.append(a)}).catch(()=>{box.querySelector("p").textContent="Workflow status: unavailable / not verified"});
+  }
+  // Deep-link to matching term within actual headings, paragraphs and code blocks.
+  const term=new URLSearchParams(location.search).get("q");
+  if(term&&term.length>=2&&term.length<=100){
+    const normalized=term.toLocaleLowerCase();const targets=[...article.querySelectorAll("h1,h2,h3,h4,p,li,pre code")];
+    const matched=targets.find(el=>el.textContent.toLocaleLowerCase().includes(normalized));if(matched){matched.classList.add("search-target");requestAnimationFrame(()=>matched.scrollIntoView({block:"center"}))}
+  }
+  document.querySelector("#knowledge-query")?.addEventListener("input",()=>{document.querySelectorAll("#search-results a").forEach(a=>{const q=document.querySelector("#knowledge-query")?.value.trim();if(q&&a.getAttribute("href")?.startsWith("./")){const u=new URL(a.href);u.searchParams.set("q",q);a.href=u.href}})});
+})();
