@@ -16,9 +16,25 @@
 
 Append a suffix to the site URL to share a section. Selecting a navigation item updates the URL; browser Back and Forward restore it. Scrolling updates the highlighted section and browser title.
 
+## Engineering knowledge sections
+
+- [Databases & Storage](https://app-bible.jelvan.pro/#databases) — Choose storage by consistency, query patterns, tenancy and recovery requirements. Start with the data lifecycle before selecting a product.
+- [Authentication & SSO](https://app-bible.jelvan.pro/#authentication) — Authentication proves identity; authorization decides what that identity can do. Keep the two responsibilities explicit.
+- [Sessions & Authorization](https://app-bible.jelvan.pro/#sessions) — A successful login must create a controlled, revocable session and enforce access to each resource.
+- [Email OTP & Recovery](https://app-bible.jelvan.pro/#otp) — Design challenge issuance, delivery and atomic verification together. The following numeric limits are example application policy, not universal provider requirements.
+- [Email Sending & Deliverability](https://app-bible.jelvan.pro/#email) — Use a backend delivery service and observable queues. Keep transactional security messages distinct from marketing campaigns.
+- [APIs, Webhooks & Integrations](https://app-bible.jelvan.pro/#apis) — Define contracts and failure handling before connecting external systems.
+- [Cloud, DNS & Secrets](https://app-bible.jelvan.pro/#infrastructure) — Keep source, deployment, DNS, runtime resources and credentials as separate layers with explicit ownership.
+- [Queues, Jobs & Reliability](https://app-bible.jelvan.pro/#queues) — Background work needs a durable state model and an explicit retry budget.
+- [AI, RAG & Tool Security](https://app-bible.jelvan.pro/#ai-security) — Separate trusted policy and tool permissions from retrieved documents, email bodies and model output.
+- [Testing & Accessibility](https://app-bible.jelvan.pro/#quality) — Validate complete user journeys and failure paths, not just whether code parses.
+- [Monitoring, Privacy & Recovery](https://app-bible.jelvan.pro/#operations) — Operate the system with measurable service objectives, minimal data collection and rehearsed recovery.
+
+See [Engineering Knowledge Reference](ENGINEERING_KNOWLEDGE.md) for the complete text and official sources. All twenty sections are reference material; the static site does not execute these backend patterns.
+
 ## Controls
 
-- Search filters navigation labels, not full article text. Clear search to restore all nine items.
+- Search filters navigation labels, not full article text. Clear search to restore all twenty items.
 - Ctrl+K / Command+K focuses the visible search field.
 - On mobile, open the menu to see navigation and search; selecting a section closes it.
 - Use the theme button to switch dark/light. Theme and search reset on reload.
