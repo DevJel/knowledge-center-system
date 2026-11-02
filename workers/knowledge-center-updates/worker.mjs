@@ -10,6 +10,16 @@ export function inspectOutline(html){
   const headings=[...main.matchAll(/<h[123]\b[^>]*>([\s\S]*?)<\/h[123]>/gi)].slice(0,5).map(match=>clean(match[1])).filter(Boolean);
   return {title,headings};
 }
+export function extractMainText(html){
+ const main=html.match(/<main\b[^>]*>([\s\S]*)/i)?.[1]||html;
+ return main.replace(/<(script|style|nav|footer|header)\b[^>]*>[\s\S]*?<\/\1>/gi," ")
+  .replace(/<[^>]*>/g," ")
+  .replace(/&nbsp;|&#160;/gi," ")
+  .replace(/&amp;/gi,"&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">")
+  .replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'")
+  .replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Number(n)))
+  .replace(/\s+/g," ").trim().slice(0,12000);
+}
 async function digest(value){
  const bytes=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(JSON.stringify(value)));
  return [...new Uint8Array(bytes)].map(b=>b.toString(16).padStart(2,"0")).join("");
@@ -38,10 +48,14 @@ export async function inspectSource(url,previous,checkedAt,fetcher=fetch){
   if(!response.ok){await response.body?.cancel();throw Error("http_"+response.status);}
   const type=response.headers.get("content-type")||"";
   if(!/text\/html|text\/plain|application\/xhtml\+xml/i.test(type)){await response.body?.cancel();throw Error("unsupported_content_type");}
-  const prefix=await readPrefix(response),outline=inspectOutline(prefix.text);
-  if(!outline.title&&!outline.headings.length)throw Error("outline_not_available");
-  const signature=await digest(outline),changed=Boolean(previous?.digest&&previous.digest!==signature);
-  return {url,resolvedUrl:current,status:previous?.digest?(changed?"outline_changed":"unchanged"):"baseline",checkedAt,lastSuccessAt:checkedAt,lastChangeAt:changed?checkedAt:(previous?.lastChangeAt||null),title:outline.title,headings:outline.headings,digest:signature,etag:response.headers.get("etag"),lastModified:response.headers.get("last-modified"),httpStatus:response.status,truncated:prefix.truncated,comparisonScope:"title_and_first_five_main_headings",error:null};
+  const prefix=await readPrefix(response),outline=inspectOutline(prefix.text),mainText=extractMainText(prefix.text);
+  if(!outline.title&&!outline.headings.length&&!mainText)throw Error("outline_not_available");
+  const signature=await digest(outline),contentDigest=await digest(mainText);
+  const outlineChanged=Boolean(previous?.digest&&previous.digest!==signature);
+  const contentChanged=Boolean(previous?.contentDigest&&previous.contentDigest!==contentDigest);
+  const changed=outlineChanged||contentChanged;
+  const status=!previous?.digest?"baseline":outlineChanged?"outline_changed":contentChanged?"content_changed":"unchanged";
+  return {url,resolvedUrl:current,status,checkedAt,lastSuccessAt:checkedAt,lastChangeAt:changed?checkedAt:(previous?.lastChangeAt||null),title:outline.title,headings:outline.headings,digest:signature,contentDigest,etag:response.headers.get("etag"),lastModified:response.headers.get("last-modified"),httpStatus:response.status,truncated:prefix.truncated,comparisonScope:"title_first_five_main_headings_and_first_12000_normalized_main_text_characters",error:null};
  }catch(error){
   const message=controller.signal.aborted?"timeout":String(error.message||"source_check_failed");
   return {...(previous||{}),url,status:"check_failed",checkedAt,error:message,lastSuccessAt:previous?.lastSuccessAt||null};
@@ -60,9 +74,9 @@ export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch,op
  const failures=sources.filter(s=>s.status==="check_failed").length;
  const record={chapterId:chapter.id,title:chapter.title,checkedAt,lastSuccessfulCheckAt:failures===0?checkedAt:old?.lastSuccessfulCheckAt||null,status:failures===0?"checked":failures===sources.length?"failed":"partial",sources,history:[{checkedAt,failed:failures,changed:sources.filter(s=>s.status==="outline_changed").length},...(old?.history||[])].slice(0,7),editorialReviewRequired:true};
  await env.UPDATE_STATE.put(key,JSON.stringify(record));
- const reviewSignals=sources.filter(source=>source.status==="outline_changed"||source.status==="check_failed").map(source=>({url:source.url,status:source.status,title:source.title||null,headings:source.headings||[],error:source.error||null,lastSuccessAt:source.lastSuccessAt||null}));
+ const reviewSignals=sources.filter(source=>source.status==="outline_changed"||source.status==="content_changed"||source.status==="check_failed").map(source=>({url:source.url,status:source.status,title:source.title||null,headings:source.headings||[],error:source.error||null,lastSuccessAt:source.lastSuccessAt||null}));
  if(reviewSignals.length){
-  const review={chapterId:chapter.id,title:chapter.title,detectedAt:checkedAt,status:"needs_editorial_review",reason:"reference_outline_change_or_source_failure",signals:reviewSignals,previousSuccessfulCheckAt:old?.lastSuccessfulCheckAt||null,reviewedAt:null,reviewer:null};
+  const review={chapterId:chapter.id,title:chapter.title,detectedAt:checkedAt,status:"needs_editorial_review",reason:"reference_content_change_or_source_failure",signals:reviewSignals,previousSuccessfulCheckAt:old?.lastSuccessfulCheckAt||null,reviewedAt:null,reviewer:null};
   await env.UPDATE_STATE.put("review:"+chapter.id+":"+checkedAt.slice(0,10),JSON.stringify(review),{expirationTtl:7776000});
  }
  console.log(JSON.stringify({chapterId:chapter.id,status:record.status,sources:sources.length,failed:failures,reviewSignals:reviewSignals.length}));
