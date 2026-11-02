@@ -147,3 +147,15 @@ renderDiagrams();
   }
   document.querySelector("#knowledge-query")?.addEventListener("input",()=>{document.querySelectorAll("#search-results a").forEach(a=>{const q=document.querySelector("#knowledge-query")?.value.trim();if(q&&a.getAttribute("href")?.startsWith("./")){const u=new URL(a.href);u.searchParams.set("q",q);a.href=u.href}})});
 })();
+
+
+/* Accessible format switching for explicitly authored, paired code examples. */
+document.querySelectorAll("[data-example-switcher]").forEach(root=>{
+ const buttons=[...root.querySelectorAll("[data-example-tab]")],panels=[...root.querySelectorAll("[data-example-panel]")],status=root.querySelector("[data-example-status]");
+ let active=0;
+ function select(index){active=index;buttons.forEach((b,i)=>{b.setAttribute("aria-selected",String(i===index));b.tabIndex=i===index?0:-1});panels.forEach((p,i)=>p.hidden=i!==index);status.textContent=buttons[index].textContent+" selected."}
+ buttons.forEach((button,i)=>{button.onclick=()=>select(i);button.onkeydown=e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();const next=(i+(e.key==="ArrowRight"?1:-1)+buttons.length)%buttons.length;select(next);buttons[next].focus()}}});
+ root.querySelector("[data-example-copy]")?.addEventListener("click",async()=>{try{await copyText(panels[active].querySelector("code").textContent,root.querySelector("[data-example-copy]"))}catch{status.textContent="Copy unavailable; select the visible snippet."}});
+ root.querySelector("[data-example-validate]")?.addEventListener("click",()=>{const code=panels[active].querySelector("code").textContent;status.textContent=/REPLACE_|YOUR_|TODO|FIXME/.test(code)?"Review required: example contains placeholder values.":"No obvious placeholders found. Syntax and deployment have NOT been tested."});
+ select(0);
+});
