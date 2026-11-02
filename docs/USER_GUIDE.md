@@ -1,60 +1,91 @@
-# User guide
+# Reader Guide — MASTER AI Knowledge Center
 
-## Section reference
+## Open and navigate the chapters
 
-| Section | Link suffix | Purpose |
-| --- | --- | --- |
-| Overview & Vision | #overview | Understand the operating-system concept, users and intended outcomes. |
-| Phase 1: Discovery & Scoping | #phase1 | Define workflows, requirements, priorities and success metrics. |
-| Phase 2: System Architecture | #phase2 | Review orchestration, memory, routing, tool boundaries and security examples. |
-| Phase 3: Data & Prototyping | #phase3 | Prepare a golden dataset and prototype acceptance criteria. |
-| Phase 4: Agent Development | #phase4 | Compare agent patterns, prompts and evaluation thresholds. |
-| Phase 5: Client-in-the-Loop | #phase5 | Plan reviews, feedback capture and weekly updates. |
-| Phase 6: Deployment | #phase6 | Explore example deployment modes and monitoring. |
-| Phase 7: Post-Launch & Scale | #phase7 | Review optimization, service targets and pricing examples. |
-| Appendices | #appendices | Find the reference prompt, glossary and original content changelog. |
+The Knowledge Center is organized as separate, standalone HTML pages. Select a topic from the reader navigation or use the direct links below. A chapter opens as its own document with its own URL; it is not an anchor inside a single long article.
 
-Append a suffix to the site URL to share a section. Selecting a navigation item updates the URL; browser Back and Forward restore it. Scrolling updates the highlighted section and browser title.
+Start at [MASTER AI Knowledge Center](https://app-bible.jelvan.pro/). For the full list of local files, topic descriptions and direct links, see [HTML Page Directory](HTML_PAGES.md).
 
-## Engineering knowledge sections
+### Foundations
 
-- [Databases & Storage](https://app-bible.jelvan.pro/#databases) — Choose storage by consistency, query patterns, tenancy and recovery requirements. Start with the data lifecycle before selecting a product.
-- [Authentication & SSO](https://app-bible.jelvan.pro/#authentication) — Authentication proves identity; authorization decides what that identity can do. Keep the two responsibilities explicit.
-- [Sessions & Authorization](https://app-bible.jelvan.pro/#sessions) — A successful login must create a controlled, revocable session and enforce access to each resource.
-- [Email OTP & Recovery](https://app-bible.jelvan.pro/#otp) — Design challenge issuance, delivery and atomic verification together. The following numeric limits are example application policy, not universal provider requirements.
-- [Email Sending & Deliverability](https://app-bible.jelvan.pro/#email) — Use a backend delivery service and observable queues. Keep transactional security messages distinct from marketing campaigns.
-- [APIs, Webhooks & Integrations](https://app-bible.jelvan.pro/#apis) — Define contracts and failure handling before connecting external systems.
-- [Cloud, DNS & Secrets](https://app-bible.jelvan.pro/#infrastructure) — Keep source, deployment, DNS, runtime resources and credentials as separate layers with explicit ownership.
-- [Queues, Jobs & Reliability](https://app-bible.jelvan.pro/#queues) — Background work needs a durable state model and an explicit retry budget.
-- [AI, RAG & Tool Security](https://app-bible.jelvan.pro/#ai-security) — Separate trusted policy and tool permissions from retrieved documents, email bodies and model output.
-- [Testing & Accessibility](https://app-bible.jelvan.pro/#quality) — Validate complete user journeys and failure paths, not just whether code parses.
-- [Monitoring, Privacy & Recovery](https://app-bible.jelvan.pro/#operations) — Operate the system with measurable service objectives, minimal data collection and rehearsed recovery.
+- [Overview & Vision](https://app-bible.jelvan.pro/overview.html) — understand the purpose, operating model, intended users and system goals.
+- [Discovery & Scoping](https://app-bible.jelvan.pro/phase1.html) — define the problem, users, constraints, workflows, priorities and success measures.
+- [System Architecture](https://app-bible.jelvan.pro/phase2.html) — understand system boundaries, components, trust zones and architecture decisions.
+- [Data & Prototyping](https://app-bible.jelvan.pro/phase3.html) — prepare data, build a focused prototype and define acceptance criteria.
+- [Agent Development](https://app-bible.jelvan.pro/phase4.html) — design agent roles, tool use, prompts, validation and evaluation.
+- [Client Review & Feedback](https://app-bible.jelvan.pro/phase5.html) — plan human approvals, feedback and audit trails.
+- [Deployment](https://app-bible.jelvan.pro/phase6.html) — understand build, release, environment, verification and rollback.
+- [Post-Launch & Scale](https://app-bible.jelvan.pro/phase7.html) — operate, monitor, optimize and scale a live system.
+- [Glossary & Reference Templates](https://app-bible.jelvan.pro/appendices.html) — reusable terms, checklists and templates.
 
-See [Engineering Knowledge Reference](ENGINEERING_KNOWLEDGE.md) for the complete text and official sources. All twenty sections are reference material; the static site does not execute these backend patterns.
+### Application platform
 
-## Controls
+- [Databases & Storage](https://app-bible.jelvan.pro/databases.html)
+- [Authentication & SSO](https://app-bible.jelvan.pro/authentication.html)
+- [Sessions & Authorization](https://app-bible.jelvan.pro/sessions.html)
+- [Email OTP & Recovery](https://app-bible.jelvan.pro/otp.html)
+- [Email Delivery](https://app-bible.jelvan.pro/email.html)
+- [APIs & Webhooks](https://app-bible.jelvan.pro/apis.html)
+- [Cloud, DNS & Secrets](https://app-bible.jelvan.pro/infrastructure.html)
+- [Queues & Reliability](https://app-bible.jelvan.pro/queues.html)
 
-- Search filters navigation labels, not full article text. Clear search to restore all twenty items.
-- Ctrl+K / Command+K focuses the visible search field.
-- On mobile, open the menu to see navigation and search; selecting a section closes it.
-- Use the theme button to switch dark/light. Theme and search reset on reload.
-- Use Copy on code/templates to copy their text. Clipboard behavior can depend on browser permissions.
-- Changelog jumps to Appendices. Repository CHANGELOG.md records application changes separately.
+These chapters explain how application identity, data, APIs, email, cloud resources and background jobs fit together. Read Authentication before Sessions; read OTP together with Email Delivery; read Databases alongside Queues when designing durable workflows.
 
-## Branding
+### AI engineering
 
-The red outlined hexagon and three dots are shared by the sidebar, mobile header and favicon. Every section uses the title “Section name | MASTER AI - Knowledge Center”.
+- [AI, RAG & Tool Security](https://app-bible.jelvan.pro/ai-security.html)
+- [LLMs by Task](https://app-bible.jelvan.pro/llm-selection.html)
+- [AI Research & Updates](https://app-bible.jelvan.pro/ai-updates.html)
+- [Model Routing & Evaluation](https://app-bible.jelvan.pro/model-routing.html)
+- [Production AI Architecture](https://app-bible.jelvan.pro/chapter-01-production-ai-architecture.html)
 
-## Scope
+These topics cover model choice, retrieval, prompt-injection defenses, tool authorization, evaluation and a complete request lifecycle. Treat model-generated text and retrieved documents as untrusted input; enforce permissions in the application, not in a prompt.
 
-No account, AI execution, email sending, database or backend is implemented. Example dashboards and figures are illustrative. Do not place credentials or private information in the public repository.
+### Operations and implementation
+
+- [Testing & Accessibility](https://app-bible.jelvan.pro/quality.html)
+- [Monitoring & Recovery](https://app-bible.jelvan.pro/operations.html)
+- [Mermaid Diagram Library](https://app-bible.jelvan.pro/mermaid-diagrams.html)
+- [Worker Architecture & Implementation](https://app-bible.jelvan.pro/worker-implementation.html)
+- [Web Application Engineering](https://app-bible.jelvan.pro/web-application-engineering.html)
+
+## Daily Reference Updates panel
+
+Each chapter includes a **Daily Reference Updates** panel. It displays source-check evidence for the reference URLs registered to that chapter. The panel may show a pending first check, a baseline, unchanged source content, a changed outline/content, a partial result or a failed source check.
+
+### What the panel tells you
+
+- When the last source-check attempt occurred.
+- When the last fully successful chapter check occurred.
+- Which registered official sources were checked.
+- Whether the compared title, headings or bounded main text changed.
+- Whether a source could not be checked and its previous successful evidence may be stale.
+- Whether editorial review signals were recorded for the chapter.
+
+A source change is a prompt for human review, not proof that the chapter is wrong. Open the source, verify the actual technical change, update the relevant guidance and record the editorial decision. The Worker does not silently rewrite public chapters.
+
+For the full schedule, reference mapping, endpoint behavior, refresh procedure and failure handling, read [Daily Reference Updates](DAILY_UPDATES.md) and [Chapter Auto-Sync Map](CHAPTER_AUTOSYNC_MAP.md).
+
+## Reader controls
+
+- **Search:** filters the chapter navigation and, where enabled, searches indexed chapter content. Clear the query to restore the full directory.
+- **Keyboard shortcut:** Ctrl+K or Command+K focuses the search field where supported.
+- **Mobile navigation:** open the navigation menu to access the chapter list; selecting a chapter opens its standalone page.
+- **Theme:** use the theme control to switch between supported light and dark presentations.
+- **Copy code:** use the Copy control on a code block. If clipboard permission is unavailable, select and copy the visible source manually.
+- **Copy diagram:** Mermaid source remains available as text even if the diagram preview library cannot load.
+- **Related topics:** use a chapter's related links to continue along the learning path.
+
+## Important scope boundaries
+
+The reader is static documentation. It does not provide user accounts, run the example backend, send OTP or other email, execute AI agents, connect to a user's database or create cloud infrastructure. Those systems are described for educational use and must be implemented and secured separately.
+
+Never enter credentials, private customer information or production secrets into public documentation or examples.
 
 ## Troubleshooting
 
-If navigation is missing, clear the search. If the icon is stale, hard-refresh or reopen the tab. If the page is blank, check the browser console and serve through HTTP. For custom-domain or certificate failures, follow DEPLOYMENT.md.
-
-## AI research, diagrams and copy controls
-
-The site now has twenty-four navigation sections. AI research is dated 2 November 2026; it does not refresh automatically. See [AI research](AI_RESEARCH.md) and [diagram source](DIAGRAMS.md).
-
-Every section has Copy section and Copy link controls. Each code block has its own Copy button. Mermaid diagrams show both a rendered preview and source; copy the source into a fenced mermaid block for GitHub. If clipboard access fails, select the visible text manually. Diagram previews require the pinned external Mermaid module; readable source remains if it cannot load. The site logo remains unchanged.
+- If a chapter is missing from navigation, clear the search filter and reload the page.
+- If the Daily Reference Updates panel cannot load, the chapter remains available; retry later and check the update service status through the operator procedure.
+- If a source shows a failed check, open the official reference directly. Some providers block automated fetches or rate-limit requests.
+- If a diagram preview is unavailable, use its visible Mermaid source.
+- If a custom domain or certificate fails, follow [Deployment Guide](DEPLOYMENT.md).
