@@ -117,7 +117,7 @@ export default {
    return json({ ...record, trigger:"manual", editorialReviewRequired:true },200,origin);
   }
   if(!["GET","HEAD"].includes(request.method))return json({error:"method_not_allowed"},405,origin);
-  if(url.pathname==="/health")return json({service:"knowledge-center-updates",version:"1.1.0",schedule:"0-26 0 * * *",timezone:"Asia/Kuala_Lumpur",localWindow:"08:00–08:26 daily",chapters:CHAPTERS.length,mode:"daily_and_manual_reference_checks",manualRefresh:true,editorialRewrite:false},200,origin);
+  if(url.pathname==="/health")return json({service:"knowledge-center-updates",version:"1.2.0",schedule:"0-26 0 * * *",timezone:"Asia/Kuala_Lumpur",localWindow:"08:00–08:26 daily",chapters:CHAPTERS.length,mode:"daily_and_manual_reference_checks",manualRefresh:Boolean(env.UPDATE_TRIGGER_TOKEN),manualRefreshRoute:true,contentComparison:"title_headings_and_bounded_main_text",editorialReview:"read_only",editorialRewrite:false},200,origin);
   if(url.pathname==="/v1/chapters")return json({chapters:CHAPTERS.map(({id,title,group,order})=>({id,title,group,minute:order}))},200,origin);
   const reviewMatch=url.pathname.match(/^\/v1\/reviews\/([a-z0-9-]+)$/);
   if(reviewMatch){
