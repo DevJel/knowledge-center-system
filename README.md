@@ -1,281 +1,235 @@
-# MASTER AI - Knowledge Center
+# MASTER AI Knowledge Center — Web Development & Engineering
 
-## Daily reference updater and learning paths
+**Public developer reference · Standalone chapters · Official-source monitoring**
 
-The knowledge center has twenty-seven distinct standalone chapters, plus the index alias. Chapters are organized into Foundations, Application Platform, AI Engineering, Operations & Quality, and Implementation Chapters. Each chapter has explicit related topics, mapped official references and a Daily Reference Updates panel.
+The MASTER AI Knowledge Center is a public, chapter-based learning resource for developers, technical leads, architects and operators. It explains how to plan, design, build, secure, test, deploy and operate modern web applications and AI-enabled systems.
 
-- [Worker Architecture & Implementation](worker-implementation.html)
-- [Daily update operations guide](docs/DAILY_UPDATES.md)
-- [Versioned chapter registry](config/chapters.json)
+The material is written as practical engineering guidance: concepts are explained in context, decisions are compared, implementation steps are ordered, examples are annotated, failure cases are discussed and Mermaid diagrams show how components interact. Each topic has its own shareable HTML page.
 
-The Cloudflare Worker knowledge-center-updates is scheduled for all 27 chapters daily between 08:00 and 08:26 Malaysia time. The latest source adds authenticated on-demand refresh and editorial review signals; those endpoints require a Worker deployment and `UPDATE_TRIGGER_TOKEN` secret provisioning before they are live. The Worker records evidence and review signals; it does not silently rewrite or publish technical prose. A human reviewer approves public guidance changes.
+- **Public knowledge center:** https://app-bible.jelvan.pro/
+- **Default hosted reader:** https://devjel.github.io/knowledge-center-system/
+- **Reference update operations:** [Daily Reference Updates](docs/DAILY_UPDATES.md)
+- **Per-page source and sync map:** [Chapter Auto-Sync Map](docs/CHAPTER_AUTOSYNC_MAP.md)
+- **Complete page directory:** [HTML Page Map](docs/HTML_PAGES.md)
+- **Chapter writing standard:** [Chapter Pattern](docs/CHAPTER_PATTERN.md)
+- **Reader instructions:** [User Guide](docs/USER_GUIDE.md)
+- **System architecture:** [Architecture](docs/ARCHITECTURE.md)
+- **Deployment and recovery:** [Deployment Guide](docs/DEPLOYMENT.md)
+- **Release history:** [Changelog](CHANGELOG.md)
 
-A static, searchable development playbook hosted with GitHub Pages. This application is a documentation reader. The agents, integrations, metrics and pricing described in the playbook are reference examples, not running services or measured results.
-
-Custom domain: https://app-bible.jelvan.pro  
-Default Pages URL: https://devjel.github.io/knowledge-center-system/
-
-## Complete standalone HTML chapters
-
-Every topic HTML file now embeds its full chapter content directly in the document. Reading the content does not require React, a content API, or JavaScript. The optional shared script adds clipboard controls, theme switching and Mermaid previews. All twenty-four topic pages and the detailed architecture chapter follow the same eleven-section pattern, with topic-specific mechanics, code and process diagrams.
-
-## Separate HTML pages
-
-Each topic now has its own HTML document and URL; the main page displays Overview only. Shared assets live in assets/. Navigation loads a new document rather than scrolling through all topics. Legacy index.html hash links redirect to the matching HTML page.
-
-- [Detailed Page 1 HTML](chapter-01-production-ai-architecture.html)
-- [Page map](docs/HTML_PAGES.md)
-
-## Standalone technical chapters
-
-1. [Production AI Application Architecture and Request Lifecycle](docs/pages/01-production-ai-architecture.md) — version 1.0.0, reviewed 2 November 2026. Includes complete TypeScript lifecycle and acceptance tests, policy configuration, failure analysis and Mermaid diagrams.
-
-## Guides
-
-- [Consistent chapter pattern and Knowledge Center features](docs/CHAPTER_PATTERN.md)
-
-- [Researched AI and LLM task matrix](docs/AI_RESEARCH.md)
-- [Mermaid diagram library](docs/DIAGRAMS.md)
-
-- [Engineering knowledge: databases, authentication, OTP, email and operations](docs/ENGINEERING_KNOWLEDGE.md)
-
-- [User guide and section reference](docs/USER_GUIDE.md)
-- [Deployment, DNS, HTTPS and rollback](docs/DEPLOYMENT.md)
-- [Architecture and maintenance](docs/ARCHITECTURE.md)
-- [Changelog](CHANGELOG.md)
-
-## Local preview
-
-Serve the repository root with `python3 -m http.server 8080`, then open http://localhost:8080. No build, package installation, API key or database is required.
-
-## Branding and navigation
-
-The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Twenty-seven chapters have standalone shareable URLs. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
-
-## Hosting status
-
-GitHub Actions publishes pushes to main. Cloudflare provides DNS only, with app-bible.jelvan.pro pointing to devjel.github.io. A repository CNAME file records the intended domain. Actions publishing still requires the custom domain to be configured in GitHub Settings → Pages, followed by certificate validation and Enforce HTTPS. DNS alone does not confirm that the custom domain is live.
+> This is an educational documentation site, not a hosted application platform. Code, product selections, thresholds and architecture patterns are examples. The site does not provide authentication, send email, run AI agents, store customer data or deploy the systems described in its chapters.
 
 ---
 
-## Original reference playbook
+## 1. What each chapter provides
 
-The material below is preserved as reference guidance. Validate technology choices, estimates and thresholds for each implementation.
+Chapters are designed to follow a consistent reading and engineering pattern:
 
-# MASTER AI • Multi-Agent Operating System
+1. **Description and purpose** — what the topic is, why it exists, where it fits and when to use it.
+2. **Architecture and boundaries** — the components, trust boundaries, responsibilities and dependencies.
+3. **Implementation process** — an ordered workflow from prerequisites to verification.
+4. **Specific examples** — realistic request flows, data models, configuration, code and expected results.
+5. **Decision guidance** — alternatives, trade-offs, selection criteria and assumptions.
+6. **Mermaid diagrams** — process, sequence, state or architecture diagrams with readable source.
+7. **Security and failure handling** — abuse cases, edge cases, retries, recovery and safe defaults.
+8. **Testing and acceptance** — what to test and what evidence proves that the feature works.
+9. **Operations and maintenance** — observability, ownership, lifecycle and change management.
+10. **Related chapters and official references** — a connected learning path and sources to verify current behavior.
 
-### Production-Grade Development Playbook & README
+Use the chapter directory below to open the exact topic. The same directory and source mapping are maintained in [docs/HTML_PAGES.md](docs/HTML_PAGES.md).
 
-Welcome to the **Master AI Development** ecosystem. This complete README file is aligned with the production-grade multi-agent operating system architecture, structured for startup operators, engineers, and technical founders looking to build autonomous workflows without the operational toil.
+## 2. Chapter directory
 
----
+All chapter links below open standalone pages on the public site. The relative links also work when the documentation is previewed from the site root.
 
-## 📋 Table of Contents
+### Foundations
 
-1. Overview & Vision
-2. Phase 1: Discovery & Scoping
-3. Phase 2: System Architecture
-4. Phase 3: Data & Prototyping
-5. Phase 4: Agent Development
-6. Phase 5: Client-in-the-Loop
-7. Phase 6: Deployment
-8. Phase 7: Post-Launch & Scale
-9. Appendices & Glossary
+| Chapter | Description | Public page |
+|---|---|---|
+| Overview & Vision | System goals, intended users, operating model, use cases and success criteria. | [Open Overview](https://app-bible.jelvan.pro/overview.html) |
+| Discovery & Scoping | Requirements, stakeholder discovery, workflow mapping, constraints, prioritization and measurable outcomes. | [Open Discovery](https://app-bible.jelvan.pro/phase1.html) |
+| System Architecture | Application boundaries, orchestration, component responsibilities, trust zones and architecture decisions. | [Open Architecture](https://app-bible.jelvan.pro/phase2.html) |
+| Data & Prototyping | Data classification, sample datasets, prototypes, evaluation plans and proof-of-concept exit criteria. | [Open Data & Prototyping](https://app-bible.jelvan.pro/phase3.html) |
+| Agent Development | Agent responsibilities, prompts, tools, structured outputs, evaluation and bounded execution. | [Open Agent Development](https://app-bible.jelvan.pro/phase4.html) |
+| Client Review & Feedback | Human review, approval boundaries, feedback capture, auditability and revision cycles. | [Open Client Review](https://app-bible.jelvan.pro/phase5.html) |
+| Deployment | Build and release workflows, environment separation, configuration, verification and rollback. | [Open Deployment](https://app-bible.jelvan.pro/phase6.html) |
+| Post-Launch & Scale | Production operations, capacity, cost controls, reliability, service objectives and continuous improvement. | [Open Post-Launch](https://app-bible.jelvan.pro/phase7.html) |
+| Glossary & Reference Templates | Shared terminology, reusable templates, checklists and reference material. | [Open Appendices](https://app-bible.jelvan.pro/appendices.html) |
 
----
+### Application platform
 
-## 00. Overview & Vision
+| Chapter | Description | Public page |
+|---|---|---|
+| Databases & Storage | Relational and object storage, schema design, tenant isolation, migrations, indexing, backup and restore. | [Open Databases](https://app-bible.jelvan.pro/databases.html) |
+| Authentication & SSO | Identity proof, password flows, federation, OIDC/SAML concepts, MFA sequencing and account recovery. | [Open Authentication](https://app-bible.jelvan.pro/authentication.html) |
+| Sessions & Authorization | Session lifecycle, cookies, access policies, resource-level checks, revocation and tenant-scoped authorization. | [Open Sessions](https://app-bible.jelvan.pro/sessions.html) |
+| Email OTP & Recovery | Challenge generation, delivery, expiry, rate limits, atomic consumption, replay prevention and recovery controls. | [Open OTP](https://app-bible.jelvan.pro/otp.html) |
+| Email Delivery | Transactional email architecture, sender authentication, templates, queues, provider outcomes, bounces and complaints. | [Open Email](https://app-bible.jelvan.pro/email.html) |
+| APIs & Webhooks | Resource contracts, validation, authorization, idempotency, pagination, webhook signatures and versioning. | [Open APIs](https://app-bible.jelvan.pro/apis.html) |
+| Cloud, DNS & Secrets | Hosting boundaries, DNS, TLS, runtime bindings, secrets, environments, service identities and deployment safety. | [Open Infrastructure](https://app-bible.jelvan.pro/infrastructure.html) |
+| Queues & Reliability | Background jobs, event envelopes, outbox patterns, retries, idempotency, dead-letter queues and recovery. | [Open Queues](https://app-bible.jelvan.pro/queues.html) |
 
-Master AI is not a chatbot—it is a **multi-agent operating system** designed to replace fragmented SaaS workflows with coordinated autonomous agents that plan, act, and report. A Master Orchestrator decomposes high-level business goals into tasks distributed across specialist worker agents.
+### AI engineering
 
-* **The Problem:** Modern startups juggle 12+ siloed tools (Slack, Notion, CRMs), forcing founders and operators to act as human routers.
-* **The Solution:** A unified OS where agents handle intake, deep research, multi-step execution, and structured reporting behind secure audit trails.
-* **The Outcome:** An 80% reduction in operational toil and decision latency compressed from days to minutes.
+| Chapter | Description | Public page |
+|---|---|---|
+| AI, RAG & Tool Security | Retrieval boundaries, untrusted context, prompt injection, tool authorization, data isolation and approval gates. | [Open AI Security](https://app-bible.jelvan.pro/ai-security.html) |
+| LLMs by Task | Model selection by task, capability, context, latency, privacy, reliability, evaluation and cost. | [Open LLM Selection](https://app-bible.jelvan.pro/llm-selection.html) |
+| AI Research & Updates | Provider announcements, deprecations, model changes, source verification and editorial review. | [Open AI Updates](https://app-bible.jelvan.pro/ai-updates.html) |
+| Model Routing & Evaluation | Policy-aware model selection, evaluation thresholds, fallbacks, budgets, telemetry and routing drift. | [Open Model Routing](https://app-bible.jelvan.pro/model-routing.html) |
 
-### Target Operator Segments
+### Operations, quality and implementation
 
-| Segment | Use Case | Typical Agent Load |
-| --- | --- | --- |
-| **Pre-seed → Seed** | Founder operations, automated investor updates | 3 Agents |
-| **Seed → Series A** | Go-To-Market (GTM) research, support triage | 5–7 Agents |
-| **SMB Operations** | Finance automation, SOP execution, lead enrichment | 8–12 Agents |
+| Chapter | Description | Public page |
+|---|---|---|
+| Testing & Accessibility | Unit, integration, end-to-end, security, performance and accessibility testing with release evidence. | [Open Quality](https://app-bible.jelvan.pro/quality.html) |
+| Monitoring & Recovery | Logs, metrics, traces, service objectives, privacy-aware audit, incident response and restore practice. | [Open Operations](https://app-bible.jelvan.pro/operations.html) |
+| Mermaid Diagram Library | Flowcharts, sequence diagrams, state diagrams, ER diagrams, architecture views and diagram review. | [Open Mermaid Library](https://app-bible.jelvan.pro/mermaid-diagrams.html) |
+| Production AI Architecture | An end-to-end request lifecycle with identity, retrieval, model execution, tool policy, approval and audit. | [Open Production AI Architecture](https://app-bible.jelvan.pro/chapter-01-production-ai-architecture.html) |
+| Worker Architecture & Implementation | Event-driven handlers, scheduled work, bindings, bounded fetches, KV state, observability and testing. | [Open Worker Implementation](https://app-bible.jelvan.pro/worker-implementation.html) |
+| Web Application Engineering | End-to-end web development from discovery and UI through APIs, data, security, testing, deployment and operations. | [Open Web Application Engineering](https://app-bible.jelvan.pro/web-application-engineering.html) |
 
----
-
-## 01. Phase 1: Discovery & Scoping
-
-### Onboarding Questionnaire Checklist
-
-```yaml
-discovery_intake:
-  1_business_context: "ICP, GTM motions, key bottlenecks, existing stack"
-  2_workflow_target: "Identify repetitive processes taking >5 hours/week"
-  3_data_access: "Knowledge sources, PII boundaries, API readiness"
-  4_success_metrics: "Target metric movement in 60 days & stakeholder approvals"
-
-```
-
-### Jobs-to-Be-Done (JTBD) Framework
-
-* **Job Statement Template:** *When [situation], I want to [motivation] so I can [outcome].*
-* *Example:* When a new inbound lead books a demo, I want automated company research and tailored talking points so I can run discovery in 10 minutes instead of 1 hour.
-
-
-* **Forces Diagram:**
-* $\rightarrow$ **Push:** Current operational friction & manual bottleneck pain.
-* $\rightarrow$ **Pull:** Desired speed, structured insights, and consistency.
-* $\leftarrow$ **Anxiety:** Hallucination risks, data leakage, and system trust.
-* $\leftarrow$ **Habit:** Operator preference for manual control.
-
-
-
-### MoSCoW Feature Prioritization
-
-* **Must Have:** Master Orchestrator, 2 core specialist agents, Model Context Protocol (MCP) tool bus, and human approval gates.
-* **Should Have:** Persistent memory layer, observability tracing, and Slack integration.
-* **Could Have:** Voice agent interface, auto-retraining pipeline, and executive dashboards.
-* **Won't Have (MVP):** Native mobile apps, multi-tenant public billing, or complex fine-tuning.
+**Navigation rule:** each link opens a distinct HTML document. The page map is the canonical local file-to-topic directory; the public URLs above are the reader-facing links.
 
 ---
 
-## 02. Phase 2: System Architecture
+## 3. Official-reference auto-sync
 
-### Multi-Agent Orchestrator Topology
+The knowledge center includes a separate Cloudflare Worker named `knowledge-center-updates`. Its responsibility is to observe approved official documentation references and make the latest check evidence available to each chapter's **Daily Reference Updates** panel.
+
+### What auto-sync does
+
+- Uses the versioned chapter registry at `config/chapters.json` to map a chapter to its approved reference URLs.
+- Checks the mapped HTTPS sources on a daily per-chapter schedule.
+- Uses bounded requests, timeouts, redirect checks, response-size limits and an allowlist derived from registered source hosts.
+- Compares the page title, first five main headings and a bounded normalized sample of main-page text.
+- Stores per-source status, timestamps, response metadata and a limited history in the dedicated KV namespace.
+- Detects source heading/content changes and failed checks, then records an editorial review signal.
+- Exposes read-only JSON endpoints used by the chapter panels.
+- Supports an authenticated server-to-server refresh route for a selected chapter when the required Worker secret is configured.
+
+### What auto-sync does not do
+
+A detected source change is **not** automatically treated as a technical fact or a command to rewrite the chapter. Source pages can change navigation, layout, advertisements or wording without changing the underlying technical behavior. The Worker does not silently edit public HTML, generate code, change security policy or publish an unreviewed technical recommendation. A human editor compares the official source, validates the impact, updates the chapter and records the revision.
+
+This separation keeps source monitoring automatic while preserving editorial responsibility for public developer guidance.
+
+### Current schedule
+
+The Worker Cron expression is `0-26 0 * * *` (UTC). This corresponds to **08:00–08:26 daily in Asia/Kuala_Lumpur**. One chapter is assigned to each minute according to its zero-based registry order. There are 27 chapter slots; the overview is a real chapter and is checked once, not duplicated as an index alias.
+
+The schedule is a monitoring cadence, not a guarantee that every provider will respond successfully. A source can block automated requests, rate-limit the Worker or return an error. The panel must show that condition rather than imply that a failed check succeeded.
+
+### Auto-sync architecture
 
 ```mermaid
 flowchart TD
-  G["User goal"] --> O["Orchestrator"]
-  O --> R["Model router"]
-  O --> K["Authorized knowledge"]
-  R --> A["Specialist agent"]
-  K --> A
-  A --> V{"Validate action"}
-  V -->|Allowed| T["Scoped tool execution"]
-  V -->|Approval needed| H["Human review"]
-  H --> T
-  T --> L["Audit and result"]
+  A["Chapter registry and approved URLs"] --> B["Daily Cron slot for chapter"]
+  B --> C["Validate URL against HTTPS host allowlist"]
+  C --> D["Fetch with timeout, redirect and byte limits"]
+  D --> E["Normalize title, headings and bounded main text"]
+  E --> F["Compare with previous source fingerprint"]
+  F --> G["Persist latest evidence and history in KV"]
+  F --> H{"Changed or failed?"}
+  H -->|Yes| I["Create editorial review signal"]
+  H -->|No| J["Record unchanged or baseline"]
+  G --> K["Read-only chapter JSON endpoint"]
+  I --> K
+  J --> K
+  K --> L["Daily Reference Updates panel"]
+  L --> M["Human checks official source and affected chapter"]
+  M --> N["Editor updates public chapter and changelog"]
 ```
 
-### Core Tech Stack Recommendations
+### Status meanings
 
-| Layer | Production Choice | Rationale |
-| --- | --- | --- |
-| **Orchestration** | LangGraph / Temporal | Stateful Directed Acyclic Graphs (DAGs) with robust retries |
-| **LLM Router** | LiteLLM + Martian | Intelligent model fallbacks and cost optimization |
-| **Memory** | Qdrant + PostgreSQL | Hybrid vector storage and structured relational episodic logs |
-| **Tooling Bus** | MCP (Model Context Protocol) | Standardized, secure, modular tool execution interface |
+| Status | Meaning | Recommended action |
+|---|---|---|
+| `pending` | No successful stored observation exists yet. | Wait for the scheduled slot or use an authorized refresh. |
+| `baseline` | First successful observation; establishes comparison state. | No change claim should be made from a baseline alone. |
+| `unchanged` | The compared content fingerprint is unchanged, or a valid conditional response reused prior evidence. | No editorial action unless another issue is known. |
+| `outline_changed` | The title or compared headings changed. | Review the official source and affected chapter. |
+| `content_changed` | The bounded normalized main text changed while headings may remain the same. | Compare the exact technical behavior, examples and version notes. |
+| `check_failed` | A source could not be evaluated. Previous successful evidence is retained where available. | Investigate URL, provider restrictions, rate limits or service failure. |
+| `partial` | At least one source succeeded and at least one source failed. | Review failed sources; do not call the chapter fully synchronized. |
+| `failed` | All mapped source checks failed. | Treat displayed successful evidence as stale and investigate. |
+
+### Where to configure and maintain auto-sync
+
+| Concern | Authoritative location | Responsibility |
+|---|---|---|
+| Chapter names, order, related pages and approved source URLs | `config/chapters.json` | Editorial source-of-truth registry |
+| Runtime registry and scheduled/check logic | `workers/knowledge-center-updates/worker.mjs` | Worker implementation; keep registry synchronized |
+| Runtime bindings, compatibility and schedule manifest | `workers/knowledge-center-updates/wrangler.jsonc` | Deployment configuration |
+| Automated behavior tests | `workers/knowledge-center-updates/worker.test.mjs` | Regression and failure-path coverage |
+| Chapter panel rendering and status labels | `assets/daily-updates.js` | Public reader integration |
+| Panel presentation | `assets/chapters.css` | Responsive status and review presentation |
+| Generated public search data | `assets/search-index.json` | Rebuilt from chapter content |
+| Per-page source map | `docs/CHAPTER_AUTOSYNC_MAP.md` | Human-readable mapping and review guide |
+| Operational procedure and endpoint contract | `docs/DAILY_UPDATES.md` | Operator runbook |
+
+For the full process, secret requirements, endpoints, tests, limits, deployment separation and rollback, read [Daily Reference Updates — Operations and Implementation](docs/DAILY_UPDATES.md). For every chapter's exact source URLs, read [Chapter Auto-Sync Map](docs/CHAPTER_AUTOSYNC_MAP.md).
 
 ---
 
-## 03. Phase 3: Data & Prototyping
+## 4. How to update a chapter safely
 
-### Golden Dataset Schema Specification
+1. Open the chapter's **Daily Reference Updates** panel and note its last attempt, last successful check and any review signal.
+2. Open the official source link shown by the panel. Verify the page itself; do not rely on the detected title or heading change alone.
+3. Identify the exact affected section, API behavior, version, deprecation date, security recommendation or code sample.
+4. Check a second authoritative source when the change is consequential or ambiguous.
+5. Update the relevant chapter explanation, decision criteria, code, diagram and related links together.
+6. Update cross-references and the source mapping if the official reference URL changed.
+7. Record the editorial decision, source checked date, affected chapter and revision in the changelog.
+8. Run the documented Worker tests, registry checks, search build, structural checks and JavaScript syntax checks.
+9. Deploy the Worker separately when its code, registry, binding or schedule changes. Static page publication alone does not deploy Worker code.
+10. Inspect the public chapter and its update panel after publication.
 
-```yaml
-golden_dataset_row:
-  id: "lead_001"
-  input_query: "Perform deep research on Acme Inc for upcoming enterprise pitch."
-  expected_output: "{overview: '...', tech_stack: '...', signals: '...'}"
-  source_doc_ids: ["notion:workspace_123"]
-  complexity: "medium"
-  risk_level: "low"
+Never place a Worker token, API key, SMTP password or other secret in public HTML, a browser script, a public JSON file or a documentation example.
 
+---
+
+## 5. Local preview and validation
+
+Serve the project root over HTTP:
+
+```sh
+python3 -m http.server 8080
 ```
 
-### Prototyping Sprint Checklist
+Then open `http://localhost:8080/`.
 
-* **Days 1–2:** Build single agent workflow using 10 golden dataset rows.
-* **Days 3–4:** Introduce orchestrator logic and test failure modes.
-* **Day 5:** Integrate memory layers and quantify performance improvements.
-* **Day 6–7:** Implement human-in-the-loop validation UI and measure approval latency.
-* **Exit Criteria:** $\ge 85\%$ golden dataset pass rate and $< 2\%$ hallucination rate.
+Run the documentation checks from the project root:
 
----
-
-## 04. Phase 4: Agent Development
-
-### Agent Prompt Engineering Standard
-
-```markdown
-ROLE: You are [Agent Name], a specialist in [Domain].
-CONTEXT: Company context and operating boundaries.
-CONSTRAINTS: Use only verified tools provided; cite all external facts.
-TASK: [Specific Decomposed Task Instructions]
-EVAL: Self-check output against strict factuality and format criteria before responding.
-
+```sh
+node --test workers/knowledge-center-updates/worker.test.mjs
+python3 scripts/check_registry.py
+python3 scripts/build_search.py
+python3 scripts/check_docs.py .
+node --check assets/daily-updates.js
+node --check workers/knowledge-center-updates/worker.mjs
 ```
 
-### Evaluation & Guardrail Thresholds
-
-| Dimension | Metric | Production Threshold |
-| --- | --- | --- |
-| **Accuracy** | Human expert preference score | $\ge 85\%$ |
-| **Hallucination** | Natural Language Inference (NLI) check | $\le 2\%$ |
-| **Latency** | p95 end-to-end task completion | $\le 4.5\text{s}$ per sub-agent step |
-| **Cost** | Average compute cost per workflow run | $\le \$0.40$ |
+The test suite uses controlled mock responses. It verifies application behavior and failure handling; it does not prove that every live provider URL is reachable. A live Worker check and a successful static-site deployment are separate verification steps.
 
 ---
 
-## 05. Phase 5: Client-in-the-Loop
+## 6. Hosting and runtime boundaries
 
-* **Weekly Development Cadence:**
-* **Monday:** Planning & Loom sprint demo.
-* **Tuesday–Wednesday:** Active agentic build & real-time trace updates in Slack.
-* **Thursday:** Client staging QA and feedback collection.
-* **Friday:** Retrospective, metrics review, and backlog grooming.
+- The reader is a static collection of HTML, CSS, JavaScript and generated search data.
+- Static site publication is handled by GitHub Pages.
+- Cloudflare provides DNS for the custom hostname and separately runs the reference-monitoring Worker.
+- The Worker uses a dedicated KV namespace through the `UPDATE_STATE` binding.
+- The browser reads public source-check metadata; it must never receive the manual refresh secret.
+- A successful static-site publication does not deploy Worker source.
+- A successful Worker upload does not prove that every external source was reachable or that the custom domain is serving the newest browser cache.
 
+For DNS, HTTPS, publishing and rollback details, see [Deployment Guide](docs/DEPLOYMENT.md). For service boundaries and data flow, see [Architecture](docs/ARCHITECTURE.md).
 
-* **Feedback Capture Loop:** Every execution run includes thumbs up/down inline feedback widgets. Negative feedback automatically generates a tracked issue ticket with attached execution traces.
+## 7. Editorial and technical quality standard
 
----
+Public chapters should be understandable without assuming that the reader already knows the product ecosystem. Define acronyms on first use, explain why each step exists, state prerequisites and expected outcomes, identify which code runs in the browser versus the server, distinguish illustrative configuration from deployable configuration, and call out provider-specific assumptions.
 
-## 06. Phase 6: Deployment
+Prefer current official documentation for API behavior and security claims. Date time-sensitive comparisons. Do not present benchmark numbers, pricing, product availability or performance thresholds as universal facts unless the source, test conditions and date are stated.
 
-### Containerization Dockerfile Template
-
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 8080
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
-
-```
-
-### Deployment Governance Modes
-
-1. **Human-in-the-Loop:** Every external side effect (emails, API posts, financial transactions) requires explicit human sign-off. (Default for first 30 days).
-2. **On-Loop Mode:** Agents execute tasks autonomously; human operators review batches asynchronously for low-risk workflows.
-3. **Fully Autonomous:** Unattended execution allowed only when agent accuracy exceeds $95\%$ over 500 consecutive runs.
-
----
-
-## 07. Phase 7: Post-Launch & Scale
-
-### Automated Prompt Optimization Pipeline
-
-* **Trigger:** Weekly schedule OR when user corrections exceed 50 instances.
-* **Action:** Collect feedback logs $\rightarrow$ Curate dataset $\rightarrow$ Run evaluation suite on holdout set $\rightarrow$ Promote improved prompt via automated pull request if accuracy increases by $\ge 2\%$.
-
-### Cost & Token Optimization Levers
-
-* Route low-complexity extraction and classification tasks to efficient models (e.g., Claude Haiku or GPT-4o-mini), saving up to $60\%$ on inference costs.
-* Implement semantic caching for frequent queries.
-* Summarize episodic memory contexts to reduce token overhead by up to $40\%$.
-
----
-
-## 08. Appendices
-
-### Glossary
-
-* **Orchestrator:** The primary coordinator agent that breaks user goals into directed acyclic graphs (DAGs) of tasks.
-* **MCP (Model Context Protocol):** An open standard for securely connecting AI models to data sources and external tools.
-* **Golden Set:** A curated collection of verified input-output pairs used for rigorous regression testing and evaluation.
-* **Trace:** A comprehensive audit log recording every intermediate reasoning step, token usage, cost, and tool call.
-
-### Change Log
-
-* **v1.0 (Nov 2025):** Initial production release featuring the 7-phase development lifecycle, multi-agent orchestrator design, evaluation frameworks, and deployment specs.
+**The goal is not simply to list technologies. It is to teach a developer how to make a sound decision, implement it safely, prove it works and maintain it as the underlying platforms change.**
