@@ -7,7 +7,6 @@ The MASTER AI Knowledge Center is a public, chapter-based learning resource for 
 The material is written as practical engineering guidance: concepts are explained in context, decisions are compared, implementation steps are ordered, examples are annotated, failure cases are discussed and Mermaid diagrams show how components interact. Each topic has its own shareable HTML page.
 
 - **Public knowledge center:** https://app-bible.jelvan.pro/
-- **Default hosted reader:** https://devjel.github.io/knowledge-center-system/
 - **Reference update operations:** [Daily Reference Updates](docs/DAILY_UPDATES.md)
 - **Per-page source and sync map:** [Chapter Auto-Sync Map](docs/CHAPTER_AUTOSYNC_MAP.md)
 - **Complete page directory:** [HTML Page Map](docs/HTML_PAGES.md)
