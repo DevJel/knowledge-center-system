@@ -1721,3 +1721,12 @@ dialog label{display:block;font-size:12px;color:var(--muted);margin:20px 0 8px}
 .zoom-inner{transform-origin:top left;width:max-content;min-width:100%;padding:20px}.zoom-inner svg{max-width:none!important;height:auto!important}
 .search-target{outline:3px solid var(--accent);outline-offset:6px;border-radius:4px}
 @media print{.audit-checklist,.code-switcher,.diagram-zoom-button,.deploy-status,.mermaid-zoom{display:none!important}}
+
+
+/* Official platform and technology reference cards */
+.brand-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:18px 0}
+.brand-card{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--fg);text-decoration:none;min-width:0}
+.brand-card:hover{border-color:var(--accent);text-decoration:none}
+.brand-card img{object-fit:contain;flex:none}
+.brand-card span{display:grid;gap:5px;min-width:0}
+.brand-card small{font-size:12px;line-height:1.5;color:var(--muted)}
