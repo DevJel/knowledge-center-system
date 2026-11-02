@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.5.0 — 3 November 2026
+
+- Rewrote the public README as a developer-facing Knowledge Center guide with all 27 standalone chapter links, learning paths, architecture, auto-sync explanation and contribution process.
+- Added a complete chapter-by-chapter official reference map, including chapter IDs, URLs, schedule slots and related learning links.
+- Rebuilt the HTML page directory and reader guide to use standalone chapter URLs instead of obsolete hash anchors.
+- Updated the chapter authoring standard and architecture documentation to define the consistent explanation, implementation, examples, Mermaid, security, testing and maintenance structure.
+- Expanded the daily update operations guide with source comparison boundaries, status meanings, endpoints, secret handling, review procedure, test commands and separate deployment steps.
+- Removed duplicate editorial review requests from the chapter update panel and improved change-history accounting for body-content changes.
+- Deployed the updated Cloudflare reference Worker with the corrected API route matchers, bounded content fingerprints and editorial review signals. The existing Cron schedule and KV binding are retained.
+- Static Pages validation and deployment are running through the configured publishing workflow; final job result is being checked.
+
+
 ## 2.4.0 — 3 November 2026
 
 - Expanded daily reference monitoring from title and heading comparison to a bounded normalized main-content fingerprint, so meaningful body changes can also create editorial review signals.
