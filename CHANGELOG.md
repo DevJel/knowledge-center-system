@@ -2,6 +2,12 @@
 
 ## 2026-11-02
 
+- Added researched task-specific model guidance, dated AI updates and evaluation/routing sections.
+- Replaced the architecture SVG with Mermaid; added seven copyable flow, sequence, state and data diagrams.
+- Added Copy section and Copy link controls throughout; retained per-code-block Copy.
+- Replaced historical hardcoded model routing examples with registry-based choices.
+- Expanded application JavaScript parses successfully; browser preview and Mermaid runtime rendering still require live verification.
+
 - Added eleven engineering sections and forty-six topics covering storage, identity, sessions, OTP, SES SMTP, APIs, cloud, queues, AI security, testing and recovery.
 - Added official references and an engineering guide; aligned the original prototype hallucination threshold with its evaluation table.
 - Validation: expanded application JavaScript syntax check passed. Live browser validation remains outstanding.
