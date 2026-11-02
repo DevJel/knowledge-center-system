@@ -1,4 +1,4 @@
-# MASTER AI — Knowledge Center
+# MASTER AI - Knowledge Center
 
 A static, searchable development playbook hosted with GitHub Pages. This application is a documentation reader. The agents, integrations, metrics and pricing described in the playbook are reference examples, not running services or measured results.
 
@@ -18,7 +18,7 @@ Serve the repository root with `python3 -m http.server 8080`, then open http://l
 
 ## Branding and navigation
 
-The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI Playbook”. Nine sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
+The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Nine sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
 
 ## Hosting status
 
