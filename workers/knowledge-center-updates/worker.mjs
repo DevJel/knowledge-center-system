@@ -72,7 +72,7 @@ export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch,op
   sources.push(await inspectSource(url,previous,checkedAt,fetcher));
  }
  const failures=sources.filter(s=>s.status==="check_failed").length;
- const record={chapterId:chapter.id,title:chapter.title,checkedAt,lastSuccessfulCheckAt:failures===0?checkedAt:old?.lastSuccessfulCheckAt||null,status:failures===0?"checked":failures===sources.length?"failed":"partial",sources,history:[{checkedAt,failed:failures,changed:sources.filter(s=>s.status==="outline_changed").length},...(old?.history||[])].slice(0,7),editorialReviewRequired:true};
+ const record={chapterId:chapter.id,title:chapter.title,checkedAt,lastSuccessfulCheckAt:failures===0?checkedAt:old?.lastSuccessfulCheckAt||null,status:failures===0?"checked":failures===sources.length?"failed":"partial",sources,history:[{checkedAt,failed:failures,changed:sources.filter(s=>s.status==="outline_changed"||s.status==="content_changed").length},...(old?.history||[])].slice(0,7),editorialReviewRequired:true};
  await env.UPDATE_STATE.put(key,JSON.stringify(record));
  const reviewSignals=sources.filter(source=>source.status==="outline_changed"||source.status==="content_changed"||source.status==="check_failed").map(source=>({url:source.url,status:source.status,title:source.title||null,headings:source.headings||[],error:source.error||null,lastSuccessAt:source.lastSuccessAt||null}));
  if(reviewSignals.length){
