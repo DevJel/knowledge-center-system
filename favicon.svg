@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="MASTER AI Knowledge Center">
   <title>MASTER AI Knowledge Center</title>
-  <rect x="2" y="2" width="60" height="60" rx="15" fill="#101827"/>
-  <path d="M32 9 52 20.5v23L32 55 12 43.5v-23L32 9Z" fill="#18263B" stroke="#F87171" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 9 52 20.5v23L32 55 12 43.5v-23L32 9Z" stroke="#F87171" stroke-width="3" stroke-linejoin="round"/>
   <path d="M32 22v9m0 0-11 9m11-9 11 9" stroke="#FCA5A5" stroke-width="3.5" stroke-linecap="round"/>
   <circle cx="32" cy="19" r="5" fill="#F87171" stroke="#FFE4E6" stroke-width="1.5"/>
   <circle cx="20" cy="42" r="5" fill="#F87171" stroke="#FFE4E6" stroke-width="1.5"/>
