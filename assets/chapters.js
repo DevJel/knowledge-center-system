@@ -66,7 +66,7 @@ query?.addEventListener("input",async()=>{
     const data=await loadSearch();if(sequence!==searchSequence)return;
     const terms=term.split(/\s+/);
     const matches=data.map(chapter=>{const title=chapter.title.toLowerCase(),text=chapter.text.toLowerCase();return {chapter,score:terms.reduce((score,t)=>score+(title.includes(t)?10:0)+(text.includes(t)?1:0),0),matches:terms.every(t=>title.includes(t)||text.includes(t))};}).filter(x=>x.matches).sort((a,b)=>b.score-a.score).slice(0,20);
-    for(const {chapter}of matches){const li=document.createElement("li"),a=document.createElement("a"),p=document.createElement("p");a.href=chapter.url;a.textContent=chapter.title;let position=chapter.text.toLowerCase().indexOf(terms[0]);position=Math.max(0,position-70);p.textContent=(position?"…":"")+chapter.text.slice(position,position+230)+"…";li.append(a,p);results.append(li);}
+    for(const {chapter}of matches){const li=document.createElement("li"),a=document.createElement("a"),p=document.createElement("p");a.href=chapter.url+(chapter.url.includes('?')?'&':'?')+'q='+encodeURIComponent(term);a.textContent=chapter.title;let position=chapter.text.toLowerCase().indexOf(terms[0]);position=Math.max(0,position-70);p.textContent=(position?"…":"")+chapter.text.slice(position,position+230)+"…";li.append(a,p);results.append(li);}
     searchStatus.textContent=matches.length?matches.length+" matching chapters":"No matches. Try a shorter term.";
   }catch{searchStatus.textContent="Search unavailable. Browse chapter titles in the navigation.";}
 });
