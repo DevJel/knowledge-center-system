@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.0 — 3 November 2026
+
+- Added Web Application Engineering end-to-end chapter covering UI, languages, identity, Duo, SSO, backend APIs, databases, storage, queues, security, testing, deployment and operations.
+- Added official platform logo cards, vendor documentation links and implementation guidance to application, infrastructure, AI security, testing and operational chapters.
+- Added chapter to navigation, search index, registry and HTML page map.
+- Expanded shared CSS for responsive platform reference cards.
+- Browser rendering, external logo CDN availability and production deployment still require live verification.
+
+
 ## 2.1.0 — 2 November 2026
 
 - Added full chapter search, title filtering, static page outlines and previous/next navigation.
