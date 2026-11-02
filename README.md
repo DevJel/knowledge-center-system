@@ -7,6 +7,9 @@ Default Pages URL: https://devjel.github.io/knowledge-center-system/
 
 ## Guides
 
+- [Researched AI and LLM task matrix](docs/AI_RESEARCH.md)
+- [Mermaid diagram library](docs/DIAGRAMS.md)
+
 - [Engineering knowledge: databases, authentication, OTP, email and operations](docs/ENGINEERING_KNOWLEDGE.md)
 
 - [User guide and section reference](docs/USER_GUIDE.md)
@@ -20,7 +23,7 @@ Serve the repository root with `python3 -m http.server 8080`, then open http://l
 
 ## Branding and navigation
 
-The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Twenty sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
+The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Twenty-four sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
 
 ## Hosting status
 
@@ -112,21 +115,18 @@ discovery_intake:
 
 ### Multi-Agent Orchestrator Topology
 
-```
-                  [ MASTER ORCHESTRATOR ]
-                    Goal Decomposer
-                           |
-       +-------------------+-------------------+
-       |                   |                   |
- [ MEMORY LAYER ]   [ LLM ROUTER ]     [ MCP BUS ]
- Vector + Episodic    Cost / Latency    Slack • Notion • CRM
-       |                   |                   |
-  [Research Agent]    [Ops Agent]      [Sales Agent]
-       \                   |                   /
-        +------------------+------------------+
-                           |
-            [ HUMAN APPROVAL GATE & AUDIT ]
-
+```mermaid
+flowchart TD
+  G["User goal"] --> O["Orchestrator"]
+  O --> R["Model router"]
+  O --> K["Authorized knowledge"]
+  R --> A["Specialist agent"]
+  K --> A
+  A --> V{"Validate action"}
+  V -->|Allowed| T["Scoped tool execution"]
+  V -->|Approval needed| H["Human review"]
+  H --> T
+  T --> L["Audit and result"]
 ```
 
 ### Core Tech Stack Recommendations
