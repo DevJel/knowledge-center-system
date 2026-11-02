@@ -60,7 +60,12 @@ export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch,op
  const failures=sources.filter(s=>s.status==="check_failed").length;
  const record={chapterId:chapter.id,title:chapter.title,checkedAt,lastSuccessfulCheckAt:failures===0?checkedAt:old?.lastSuccessfulCheckAt||null,status:failures===0?"checked":failures===sources.length?"failed":"partial",sources,history:[{checkedAt,failed:failures,changed:sources.filter(s=>s.status==="outline_changed").length},...(old?.history||[])].slice(0,7),editorialReviewRequired:true};
  await env.UPDATE_STATE.put(key,JSON.stringify(record));
- console.log(JSON.stringify({chapterId:chapter.id,status:record.status,sources:sources.length,failed:failures}));
+ const reviewSignals=sources.filter(source=>source.status==="outline_changed"||source.status==="check_failed").map(source=>({url:source.url,status:source.status,title:source.title||null,headings:source.headings||[],error:source.error||null,lastSuccessAt:source.lastSuccessAt||null}));
+ if(reviewSignals.length){
+  const review={chapterId:chapter.id,title:chapter.title,detectedAt:checkedAt,status:"needs_editorial_review",reason:"reference_outline_change_or_source_failure",signals:reviewSignals,previousSuccessfulCheckAt:old?.lastSuccessfulCheckAt||null,reviewedAt:null,reviewer:null};
+  await env.UPDATE_STATE.put("review:"+chapter.id+":"+checkedAt.slice(0,10),JSON.stringify(review));
+ }
+ console.log(JSON.stringify({chapterId:chapter.id,status:record.status,sources:sources.length,failed:failures,reviewSignals:reviewSignals.length}));
  return record;
 }
 async function constantTimeTokenMatch(provided,expected){\n if(typeof provided!=="string"||typeof expected!=="string"||!expected)return false;\n const encode=value=>new TextEncoder().encode(value);\n const [a,b]=await Promise.all([crypto.subtle.digest("SHA-256",encode(provided)),crypto.subtle.digest("SHA-256",encode(expected))]);\n const aa=new Uint8Array(a),bb=new Uint8Array(b);let diff=0;for(let i=0;i<aa.length;i++)diff|=aa[i]^bb[i];return diff===0;\n}\nfunction json(value,status=200,origin=null){
