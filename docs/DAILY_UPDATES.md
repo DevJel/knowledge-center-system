@@ -9,9 +9,9 @@ Cloudflare account: Jelvan - Projects - Works (f4411b0d8a7a6d0188d924b95344f149)
 KV namespace: knowledge-center-reference-updates (ff0e7c87fd1e42f1a3cb3972166dec64)  
 Binding: UPDATE_STATE  
 Read-only API: https://knowledge-center-updates.bolekpadjelvan.workers.dev  
-Cron: `0-25 0 * * *` — 08:00–08:25 daily in Asia/Kuala_Lumpur
+Cron: `0-26 0 * * *` — 08:00–08:25 daily in Asia/Kuala_Lumpur
 
-Each minute selects one of the twenty-six registered chapters. The overview at index.html is an alias of overview.html and does not require a duplicate scheduled check. Cron configuration changes can take up to fifteen minutes to propagate.
+Each minute selects one of the twenty-seven registered chapters. The overview at index.html is an alias of overview.html and does not require a duplicate scheduled check. Cron configuration changes can take up to fifteen minutes to propagate.
 
 ## What updates automatically
 
@@ -50,7 +50,23 @@ The Worker embeds the same registry as config/chapters.json. The registry checke
 | Unknown chapter ID | 404 |
 | Browser request from an unapproved Origin | 403 |
 
-CORS permits the custom site and the GitHub Pages origin. It is not authentication. Only public reference metadata is stored and served. There is no public mutation endpoint and no API key in the browser.
+CORS permits the custom site and the GitHub Pages origin. It is not authentication. Only public reference metadata is stored and served. The public reader cannot trigger a refresh. A server-to-server manual refresh endpoint is available and requires the Worker secret `UPDATE_TRIGGER_TOKEN`; never put this secret in browser JavaScript or public HTML.
+
+## On-demand refresh and editorial review queue
+
+An authorized operator can request an immediate source check for one registered chapter:
+
+```sh
+curl -X POST \\
+  -H 'Authorization: Bearer $UPDATE_TRIGGER_TOKEN' \\
+  https://knowledge-center-updates.bolekpadjelvan.workers.dev/v1/refresh/authentication
+```
+
+The token must be configured as a Worker secret named `UPDATE_TRIGGER_TOKEN`. A missing secret returns 503; an invalid token returns 401; an unknown chapter returns 404. Manual refresh bypasses the same-day schedule cache and checks only the selected chapter. It does not accept arbitrary URLs.
+
+When a mapped source heading changes or a source check fails, the Worker stores a review item in KV. Read the latest signals for a chapter with `GET /v1/reviews/{chapterId}`. Each item records source URL, observed status, heading outline or error, detection time and last successful check. These are review signals, not proof that the technical prose is wrong.
+
+The Worker automatically refreshes reference evidence and creates editorial review items. It does not autonomously rewrite or publish technical prose. Human review is required before changing public guidance, code examples or security recommendations. This protects the public knowledge base from source-page noise, prompt injection and unverified provider changes.
 
 ## State semantics
 
@@ -69,9 +85,9 @@ KV is eventually consistent. Same-day successful checks are reused, but this is 
 
 ## Boundaries, capacity and failure handling
 
-Fetches accept only registry-derived HTTPS hosts, reject credentials and custom ports, follow at most two allowlisted redirects, time out after eight seconds, and consume no more than 256 KiB from each source. At most three sources are checked for a chapter, sequentially. The normal schedule generates twenty-six executions and 59 source checks per day, before redirects. Recount the registry when changing references.
+Fetches accept only registry-derived HTTPS hosts, reject credentials and custom ports, follow at most two allowlisted redirects, time out after eight seconds, and consume no more than 256 KiB from each source. At most three sources are checked for a chapter, sequentially. The normal schedule generates twenty-seven executions and 62 source checks per day, before redirects. Each chapter receives one scheduled slot; an authorized operator may trigger an additional check at any time. Recount the registry when changing references.
 
-The namespace is isolated from authentication and production business data. No model inference, paid subscription or billing upgrade was enabled. Shared free-tier capacity, provider rate limits and CPU limits can still cause failures. Observe actual runs before expanding the workload.
+The namespace is isolated from authentication and production business data. The Worker performs no model inference and does not need an AI binding; its job is bounded source observation, on-demand checks and editorial review signals. Shared free-tier capacity, provider rate limits and CPU limits can still cause failures. Observe actual runs before expanding the workload.
 
 If a source returns 403, 404, 429 or 5xx, keep its failure visible and investigate the URL, provider policy or availability. Do not disguise a blocked check as a successful update. If a report is older than thirty-six hours, the browser marks it stale. If a Worker invocation fails before KV write, inspect Cron history and retain the previous report.
 
