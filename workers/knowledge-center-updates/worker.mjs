@@ -88,6 +88,16 @@ export default {
   if(request.method==="POST"){\n   if(!url.pathname.startsWith("/v1/refresh/"))return json({error:"method_not_allowed"},405,origin);\n   if(!env.UPDATE_TRIGGER_TOKEN)return json({error:"manual_refresh_not_configured"},503,origin);\n   const supplied=(request.headers.get("Authorization")||"").replace(/^Bearer\\s+/i,"");\n   if(!await constantTimeTokenMatch(supplied,env.UPDATE_TRIGGER_TOKEN))return json({error:"unauthorized"},401,origin);\n   const id=url.pathname.slice("/v1/refresh/".length);\n   const chapter=CHAPTERS.find(item=>item.id===id);\n   if(!chapter)return json({error:"not_found"},404,origin);\n   const record=await refreshChapter(chapter,env,new Date(),fetch,{force:true});\n   return json({ ...record, trigger:"manual", editorialReviewRequired:true },200,origin);\n  }\n  if(!["GET","HEAD"].includes(request.method))return json({error:"method_not_allowed"},405,origin);
   if(url.pathname==="/health")return json({service:"knowledge-center-updates",version:"1.1.0",schedule:"0-26 0 * * *",timezone:"Asia/Kuala_Lumpur",localWindow:"08:00–08:26 daily",chapters:CHAPTERS.length,mode:"daily_and_manual_reference_checks",manualRefresh:true,editorialRewrite:false},200,origin);
   if(url.pathname==="/v1/chapters")return json({chapters:CHAPTERS.map(({id,title,group,order})=>({id,title,group,minute:order}))},200,origin);
+  const reviewMatch=url.pathname.match(/^\\/v1\\/reviews\\/([a-z0-9-]+)$/);
+  if(reviewMatch){
+   const chapter=CHAPTERS.find(item=>item.id===reviewMatch[1]);
+   if(!chapter)return json({error:"not_found"},404,origin);
+   const keys=await env.UPDATE_STATE.list({prefix:"review:"+chapter.id+":"});
+   const reviews=[];
+   for(const item of keys.keys){const review=await env.UPDATE_STATE.get(item.name,"json");if(review)reviews.push(review);}
+   reviews.sort((a,b)=>b.detectedAt.localeCompare(a.detectedAt));
+   return json({chapterId:chapter.id,reviews:reviews.slice(0,10)},200,origin);
+  }
   const match=url.pathname.match(/^\/v1\/chapters\/([a-z0-9-]+)$/);
   const chapter=CHAPTERS.find(c=>c.id===match?.[1]);
   if(!chapter)return json({error:"not_found"},404,origin);
