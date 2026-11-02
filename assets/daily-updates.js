@@ -7,7 +7,7 @@ if(feed){const status=feed.querySelector(".feed-status"),results=feed.querySelec
   const response=await fetch(API+"/v1/chapters/"+encodeURIComponent(feed.dataset.chapterId),{signal:AbortSignal.timeout(10000),credentials:"omit"});
   if(!response.ok)throw Error("Update service unavailable");
   const record=await response.json();
-  if(record.status==="pending"){status.textContent="Awaiting the first scheduled source check. Daily schedule: 08:00–08:25 Malaysia time; each chapter has its own minute.";}
+  if(record.status==="pending"){status.textContent="Awaiting the first scheduled source check. Daily schedule: 08:00–08:26 Malaysia time; each chapter has its own minute.";}
   else{
    const age=Date.now()-Date.parse(record.checkedAt);
    status.textContent="Last attempted check: "+formatDate(record.checkedAt)+". "+(age>36*3600000?"Result is stale; inspect the scheduled Worker. ":record.status==="checked"?"All mapped sources were checked. ":"Some sources could not be checked. ")+"Last fully successful chapter check: "+formatDate(record.lastSuccessfulCheckAt)+".";
@@ -22,5 +22,24 @@ if(feed){const status=feed.querySelector(".feed-status"),results=feed.querySelec
    if(source.error)addText(card,"p","Check result: "+source.error+". Previously successful data is retained when available.");
    if(source.truncated)addText(card,"p","Comparison used a bounded document prefix, not the entire page.");
   }
+  try{
+   const reviewResponse=await fetch(API+"/v1/reviews/"+encodeURIComponent(feed.dataset.chapterId),{signal:AbortSignal.timeout(8000),credentials:"omit"});
+   if(reviewResponse.ok){
+    const reviewData=await reviewResponse.json();
+    if(reviewData.reviews?.length){
+     addText(results,"h3","Editorial review signals","review-heading");
+     for(const review of reviewData.reviews.slice(0,5)){
+      const card=addText(results,"article","","source-update editorial-review");
+      addText(card,"p","Review required · "+formatDate(review.detectedAt),"source-state");
+      addText(card,"p",review.reason==="reference_outline_change_or_source_failure"?"A mapped source changed or could not be checked. Compare the source with the chapter before editing public guidance.":"Review the recorded source evidence.");
+      for(const signal of review.signals||[]){
+       const link=document.createElement("a");link.href=signal.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent=signal.title||new URL(signal.url).hostname;card.append(link);
+       addText(card,"p",signal.status==="outline_changed"?"Source title or heading outline changed": "Source check failed: "+(signal.error||"unknown error"));
+       if(signal.headings?.length)addText(card,"p","Observed headings: "+signal.headings.join(" · "));
+      }
+     }
+    }else addText(results,"p","No editorial review signals have been recorded for this chapter.");
+   }
+  }catch{addText(results,"p","Editorial review signals are temporarily unavailable.");}
  }catch{status.textContent="Live source updates could not load. The complete chapter and static references remain available; retry later.";}
 }
