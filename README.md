@@ -7,6 +7,8 @@ Default Pages URL: https://devjel.github.io/knowledge-center-system/
 
 ## Guides
 
+- [Engineering knowledge: databases, authentication, OTP, email and operations](docs/ENGINEERING_KNOWLEDGE.md)
+
 - [User guide and section reference](docs/USER_GUIDE.md)
 - [Deployment, DNS, HTTPS and rollback](docs/DEPLOYMENT.md)
 - [Architecture and maintenance](docs/ARCHITECTURE.md)
@@ -18,7 +20,7 @@ Serve the repository root with `python3 -m http.server 8080`, then open http://l
 
 ## Branding and navigation
 
-The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Nine sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
+The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Twenty sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
 
 ## Hosting status
 
