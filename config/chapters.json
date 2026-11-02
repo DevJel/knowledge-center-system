@@ -412,5 +412,34 @@
       "https://developers.cloudflare.com/workers/runtime-apis/handlers/scheduled/",
       "https://developers.cloudflare.com/kv/"
     ]
+  },
+  {
+    "id": "web-application-engineering",
+    "group": "Application Engineering",
+    "title": "Web Application Engineering — End-to-End Blueprint",
+    "order": 26,
+    "related": [
+      "phase1",
+      "phase2",
+      "authentication",
+      "sessions",
+      "otp",
+      "email",
+      "apis",
+      "databases",
+      "infrastructure",
+      "queues",
+      "worker-implementation",
+      "quality",
+      "operations"
+    ],
+    "references": [
+      "https://developers.cloudflare.com/workers/",
+      "https://nextjs.org/docs/app",
+      "https://duo.com/docs/duoweb",
+      "https://openid.net/developers/how-connect-works/",
+      "https://www.w3.org/TR/webauthn-3/",
+      "https://owasp.org/projects/top-ten?lang=en"
+    ]
   }
 ]
