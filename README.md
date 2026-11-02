@@ -8,7 +8,7 @@ The knowledge center has twenty-seven distinct standalone chapters, plus the ind
 - [Daily update operations guide](docs/DAILY_UPDATES.md)
 - [Versioned chapter registry](config/chapters.json)
 
-The Cloudflare Worker knowledge-center-updates checks each chapter once daily between 08:00 and 08:25 Malaysia time. It updates source-evidence panels; it does not silently rewrite technical prose or code. Actual source results remain pending until a real scheduled check completes. The complete narrative remains readable without the update service.
+The Cloudflare Worker knowledge-center-updates is scheduled for all 27 chapters daily between 08:00 and 08:26 Malaysia time. The latest source adds authenticated on-demand refresh and editorial review signals; those endpoints require a Worker deployment and `UPDATE_TRIGGER_TOKEN` secret provisioning before they are live. The Worker records evidence and review signals; it does not silently rewrite or publish technical prose. A human reviewer approves public guidance changes.
 
 A static, searchable development playbook hosted with GitHub Pages. This application is a documentation reader. The agents, integrations, metrics and pricing described in the playbook are reference examples, not running services or measured results.
 
