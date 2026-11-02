@@ -63,7 +63,7 @@ export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch,op
  const reviewSignals=sources.filter(source=>source.status==="outline_changed"||source.status==="check_failed").map(source=>({url:source.url,status:source.status,title:source.title||null,headings:source.headings||[],error:source.error||null,lastSuccessAt:source.lastSuccessAt||null}));
  if(reviewSignals.length){
   const review={chapterId:chapter.id,title:chapter.title,detectedAt:checkedAt,status:"needs_editorial_review",reason:"reference_outline_change_or_source_failure",signals:reviewSignals,previousSuccessfulCheckAt:old?.lastSuccessfulCheckAt||null,reviewedAt:null,reviewer:null};
-  await env.UPDATE_STATE.put("review:"+chapter.id+":"+checkedAt.slice(0,10),JSON.stringify(review));
+  await env.UPDATE_STATE.put("review:"+chapter.id+":"+checkedAt.slice(0,10),JSON.stringify(review),{expirationTtl:7776000});
  }
  console.log(JSON.stringify({chapterId:chapter.id,status:record.status,sources:sources.length,failed:failures,reviewSignals:reviewSignals.length}));
  return record;
@@ -109,7 +109,7 @@ export default {
   if(reviewMatch){
    const chapter=CHAPTERS.find(item=>item.id===reviewMatch[1]);
    if(!chapter)return json({error:"not_found"},404,origin);
-   const keys=await env.UPDATE_STATE.list({prefix:"review:"+chapter.id+":"});
+   const keys=await env.UPDATE_STATE.list({prefix:"review:"+chapter.id+":",limit:50});
    const reviews=[];
    for(const item of keys.keys){const review=await env.UPDATE_STATE.get(item.name,"json");if(review)reviews.push(review);}
    reviews.sort((a,b)=>b.detectedAt.localeCompare(a.detectedAt));
