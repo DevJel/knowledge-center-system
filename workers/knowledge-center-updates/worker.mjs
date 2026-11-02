@@ -108,7 +108,7 @@ export default {
   if(request.method==="POST"){
    if(!url.pathname.startsWith("/v1/refresh/"))return json({error:"method_not_allowed"},405,origin);
    if(!env.UPDATE_TRIGGER_TOKEN)return json({error:"manual_refresh_not_configured"},503,origin);
-   const supplied=(request.headers.get("Authorization")||"").replace(/^Bearer\\s+/i,"");
+   const supplied=(request.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"");
    if(!await constantTimeTokenMatch(supplied,env.UPDATE_TRIGGER_TOKEN))return json({error:"unauthorized"},401,origin);
    const id=url.pathname.slice("/v1/refresh/".length);
    const chapter=CHAPTERS.find(item=>item.id===id);
