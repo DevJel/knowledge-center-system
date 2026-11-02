@@ -2,6 +2,8 @@
 
 ## 2026-11-02
 
+- Confirmed application name: MASTER AI - Knowledge Center; aligned header, hero, footer and browser-title suffix.
+
 - Added SVG favicon using the existing MASTER AI red hexagon and three-dot logo.
 - Replaced React Artifact with section-specific MASTER AI browser titles.
 - Added description and theme-color metadata.
