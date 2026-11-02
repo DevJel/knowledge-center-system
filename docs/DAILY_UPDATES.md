@@ -62,7 +62,7 @@ curl -X POST \\
   https://knowledge-center-updates.bolekpadjelvan.workers.dev/v1/refresh/authentication
 ```
 
-The token must be configured as a Worker secret named `UPDATE_TRIGGER_TOKEN`. A missing secret returns 503; an invalid token returns 401; an unknown chapter returns 404. Manual refresh bypasses the same-day schedule cache and checks only the selected chapter. It does not accept arbitrary URLs.
+The token must be configured as a Worker secret named `UPDATE_TRIGGER_TOKEN` before the manual endpoint can be used. The current source returns 503 until that secret is provisioned; an invalid token returns 401; an invalid token returns 401; an unknown chapter returns 404. Manual refresh bypasses the same-day schedule cache and checks only the selected chapter. It does not accept arbitrary URLs.
 
 When a mapped source heading changes or a source check fails, the Worker stores a review item in KV. Read the latest signals for a chapter with `GET /v1/reviews/{chapterId}`. Each item records source URL, observed status, heading outline or error, detection time and last successful check. These are review signals, not proof that the technical prose is wrong.
 
@@ -102,9 +102,9 @@ python3 scripts/check_docs.py .
 node --check assets/daily-updates.js
 ```
 
-The publishing workflow runs registry, search, structural, syntax and Worker logic checks. The fourteen Worker tests use deterministic mock responses; they do not claim that a real provider has been contacted. A live first run must be inspected separately through Cron event history and KV reports.
+The publishing workflow runs registry, search, structural, syntax and Worker logic checks. The seventeen Worker tests use deterministic mock responses; they do not claim that a real provider has been contacted. A live first run must be inspected separately through Cron event history and KV reports.
 
-Static publication and Worker deployment are separate. Pushing HTML to GitHub Pages does not deploy worker.mjs. To update the Worker, deploy its approved source and the real wrangler.jsonc in the intended account, or use the Cloudflare API. This session deployed the module and set the schedule through the API.
+Static publication and Worker deployment are separate. Pushing HTML to GitHub Pages does not deploy worker.mjs. To update the Worker, deploy its approved source and the real wrangler.jsonc in the intended account, or use the Cloudflare API. The previously deployed Worker has the 27-slot schedule and KV binding. The latest source changes add authenticated manual refresh and review-queue endpoints; those changes still require a Worker deployment and secret provisioning before the new endpoints are live.
 
 ## Maintenance and rollback
 
