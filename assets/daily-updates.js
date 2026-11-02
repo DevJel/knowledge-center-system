@@ -22,6 +22,26 @@ if(feed){const status=feed.querySelector(".feed-status"),results=feed.querySelec
    if(source.error)addText(card,"p","Check result: "+source.error+". Previously successful data is retained when available.");
    if(source.truncated)addText(card,"p","Comparison used a bounded document prefix, not the entire page.");
   }
+  const reviewResponse=await fetch(API+"/v1/reviews/"+encodeURIComponent(feed.dataset.chapterId),{signal:AbortSignal.timeout(10000),credentials:"omit"});
+  if(reviewResponse.ok){
+   const reviewData=await reviewResponse.json();
+   if(reviewData.reviews?.length){
+    const heading=addText(results,"h3","Editorial review history");
+    heading.className="review-heading";
+    for(const review of reviewData.reviews){
+     const panel=addText(results,"article","","editorial-review");
+     addText(panel,"p",review.status==="needs_editorial_review"?"Editorial review required":"Editorial review record","source-state");
+     addText(panel,"p","Detected: "+formatDate(review.detectedAt)+" · "+(review.signals?.length||0)+" source signal(s)");
+     for(const signal of (review.signals||[]).slice(0,5)){
+      const line=addText(panel,"p",(signal.title||new URL(signal.url).hostname)+" — "+(labels[signal.status]||signal.status));
+      line.className="review-signal";
+      if(signal.error)addText(panel,"p","Check issue: "+signal.error);
+      if(signal.headings?.length)addText(panel,"p","Observed headings: "+signal.headings.join(" · "));
+     }
+     addText(panel,"p","A source change is a review signal, not an automatic instruction to rewrite technical guidance. Verify the source content and affected implementation before editing.");
+    }
+   }
+  }
   try{
    const reviewResponse=await fetch(API+"/v1/reviews/"+encodeURIComponent(feed.dataset.chapterId),{signal:AbortSignal.timeout(8000),credentials:"omit"});
    if(reviewResponse.ok){
