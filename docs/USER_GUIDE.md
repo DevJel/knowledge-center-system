@@ -27,7 +27,7 @@ Append a suffix to the site URL to share a section. Selecting a navigation item 
 
 ## Branding
 
-The red outlined hexagon and three dots are shared by the sidebar, mobile header and favicon. Every section uses the title “Section name | MASTER AI Playbook”.
+The red outlined hexagon and three dots are shared by the sidebar, mobile header and favicon. Every section uses the title “Section name | MASTER AI - Knowledge Center”.
 
 ## Scope
 
