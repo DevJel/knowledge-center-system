@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.0 — 2 November 2026
+
+- Added full chapter search, title filtering, static page outlines and previous/next navigation.
+- Improved mobile navigation, keyboard access, print presentation, code wrapping and theme persistence.
+- Fixed chapter-copy formatting and added clipboard fallback.
+- Isolated Mermaid preview failures and kept sources readable.
+- Added structural validation to the Pages workflow and updated architecture documentation.
+
+
 ## 2026-11-02
 
 - Added researched task-specific model guidance, dated AI updates and evaluation/routing sections.

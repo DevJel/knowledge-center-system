@@ -1,1 +1,82 @@
-async function copyText(text,button){try{if(navigator.clipboard&&isSecureContext){await navigator.clipboard.writeText(text)}else{const input=document.createElement("textarea");input.value=text;input.style.position="fixed";input.style.opacity="0";document.body.append(input);input.select();try{if(!document.execCommand("copy"))throw Error("copy unavailable")}finally{input.remove()}}const old=button.textContent;button.textContent="Copied";setTimeout(()=>button.textContent=old,1800);document.getElementById("copy-status").textContent="Copied to clipboard"}catch{document.getElementById("copy-status").textContent="Copy unavailable. Select the visible text manually."}}document.querySelectorAll("[data-copy-code]").forEach(button=>button.addEventListener("click",()=>copyText(button.closest(".code-block").querySelector("code").textContent,button)));document.querySelector("[data-copy-page]")?.addEventListener("click",e=>{const article=document.querySelector("article").cloneNode(true);article.querySelectorAll("button,.mermaid").forEach(el=>el.remove());copyText(article.innerText,e.currentTarget)});document.querySelector("[data-copy-link]")?.addEventListener("click",e=>copyText(location.href,e.currentTarget));document.querySelector("[data-theme-toggle]")?.addEventListener("click",()=>document.body.classList.toggle("light"));try{const{default:m}=await import("https://cdn.jsdelivr.net/npm/mermaid@12.2.0/dist/mermaid.esm.min.mjs");m.initialize({startOnLoad:false,securityLevel:"strict",theme:"neutral",flowchart:{htmlLabels:false}});await m.run({querySelector:".mermaid"})}catch{document.getElementById("copy-status").textContent="Diagram preview unavailable; Mermaid source remains visible."}
+const $ = selector => document.querySelector(selector);
+const announce = message => { const status=$("#copy-status"); if(status)status.textContent=message; };
+async function copyText(value,button){
+  let copied=false;
+  try{if(navigator.clipboard&&isSecureContext){await navigator.clipboard.writeText(value);copied=true;}}catch{}
+  if(!copied){const field=document.createElement("textarea");field.value=value;field.style.cssText="position:fixed;opacity:0";document.body.append(field);field.select();try{copied=document.execCommand("copy");}finally{field.remove();}}
+  if(!copied)throw Error("Clipboard unavailable");
+  announce("Copied to clipboard");
+  const label=button.textContent;button.textContent="Copied";
+  setTimeout(()=>{button.textContent=label;},1600);
+}
+function bindCopy(button,value){button.addEventListener("click",async()=>{try{await copyText(value(),button);}catch{announce("Copy unavailable. Select the visible text manually.");}});}
+function articleText(){
+  const clone=$("article").cloneNode(true);
+  clone.querySelectorAll("button,.mermaid,.mermaid-preview,.chapter-toc").forEach(node=>node.remove());
+  clone.querySelectorAll("details").forEach(node=>node.open=true);
+  clone.style.cssText="position:fixed;left:-100000px;width:900px;white-space:normal";
+  clone.setAttribute("aria-hidden","true");document.body.append(clone);
+  try{return clone.innerText;}finally{clone.remove();}
+}
+document.querySelectorAll("[data-copy-code]").forEach(button=>{
+  const source=button.closest(".code-block")?.querySelector("code");
+  if(source)bindCopy(button,()=>source.textContent);
+});
+if($("[data-copy-page]"))bindCopy($("[data-copy-page]"),articleText);
+if($("[data-copy-link]"))bindCopy($("[data-copy-link]"),()=>location.href);
+document.querySelectorAll(".code-block").forEach(block=>{
+  const label=block.querySelector(".code-label");if(!label)return;
+  const wrap=document.createElement("button");wrap.type="button";wrap.textContent="Wrap code";wrap.setAttribute("aria-pressed","false");
+  wrap.addEventListener("click",()=>{const enabled=block.classList.toggle("wrap-code");wrap.setAttribute("aria-pressed",String(enabled));wrap.textContent=enabled?"Scroll code":"Wrap code";});
+  label.append(wrap);
+});
+try{const theme=localStorage.getItem("knowledge-theme");document.body.classList.toggle("light",theme==="light");}catch{}
+const themeButton=$("[data-theme-toggle]");
+function syncTheme(){const light=document.body.classList.contains("light");themeButton?.setAttribute("aria-pressed",String(light));if(themeButton)themeButton.textContent=light?"Dark theme":"Light theme";}
+syncTheme();
+themeButton?.addEventListener("click",()=>{document.body.classList.toggle("light");syncTheme();try{localStorage.setItem("knowledge-theme",document.body.classList.contains("light")?"light":"dark");}catch{}});
+$("[data-print]")?.addEventListener("click",()=>window.print());
+document.body.classList.add("enhanced");
+const menu=$(".mobile-nav-toggle");
+menu?.addEventListener("click",()=>{const open=document.body.classList.toggle("nav-open");menu.setAttribute("aria-expanded",String(open));});
+const links=[...document.querySelectorAll("#chapter-navigation a")];
+$("#chapter-filter")?.addEventListener("input",event=>{
+  const query=event.target.value.toLowerCase().trim();let count=0;
+  links.forEach(link=>{const show=link.textContent.toLowerCase().includes(query);link.hidden=!show;if(show)count++;});
+  $("#filter-status").textContent=count+" chapters found";
+  if(query){document.body.classList.add("nav-open");menu?.setAttribute("aria-expanded","true");}
+});
+let progressQueued=false;
+function updateProgress(){const total=document.documentElement.scrollHeight-innerHeight;const fraction=total>0?Math.min(1,Math.max(0,scrollY/total)):1;$(".reading-progress span").style.transform="scaleX("+fraction+")";progressQueued=false;}
+addEventListener("scroll",()=>{if(!progressQueued){progressQueued=true;requestAnimationFrame(updateProgress);}},{passive:true});
+addEventListener("resize",updateProgress);updateProgress();
+const dialog=$("#knowledge-search"),query=$("#knowledge-query"),results=$("#search-results"),searchStatus=$("#search-status");
+let searchData,searchLoad,searchSequence=0,opener;
+async function loadSearch(){if(searchData)return searchData;if(!searchLoad)searchLoad=fetch("./assets/search-index.json").then(async response=>{if(!response.ok)throw Error("Search index unavailable");const data=await response.json();if(!Array.isArray(data.chapters))throw Error("Invalid search index");searchData=data.chapters;return searchData;}).catch(error=>{searchLoad=null;throw error;});return searchLoad;}
+function openSearch(){opener=document.activeElement;dialog.showModal();query.focus();loadSearch().catch(()=>{searchStatus.textContent="Search could not load. Use the chapter navigation to browse.";});}
+$("[data-search-open]")?.addEventListener("click",openSearch);
+$("[data-search-close]")?.addEventListener("click",()=>dialog.close());
+dialog?.addEventListener("close",()=>opener?.focus());
+dialog?.addEventListener("click",event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();}});
+query?.addEventListener("input",async()=>{
+  const sequence=++searchSequence,term=query.value.trim().toLowerCase();results.replaceChildren();
+  if(term.length<2){searchStatus.textContent="Enter at least two characters.";return;}
+  searchStatus.textContent="Searching…";
+  try{
+    const data=await loadSearch();if(sequence!==searchSequence)return;
+    const terms=term.split(/\s+/);
+    const matches=data.map(chapter=>{const title=chapter.title.toLowerCase(),text=chapter.text.toLowerCase();return {chapter,score:terms.reduce((score,t)=>score+(title.includes(t)?10:0)+(text.includes(t)?1:0),0),matches:terms.every(t=>title.includes(t)||text.includes(t))};}).filter(x=>x.matches).sort((a,b)=>b.score-a.score).slice(0,20);
+    for(const {chapter}of matches){const li=document.createElement("li"),a=document.createElement("a"),p=document.createElement("p");a.href=chapter.url;a.textContent=chapter.title;let position=chapter.text.toLowerCase().indexOf(terms[0]);position=Math.max(0,position-70);p.textContent=(position?"…":"")+chapter.text.slice(position,position+230)+"…";li.append(a,p);results.append(li);}
+    searchStatus.textContent=matches.length?matches.length+" matching chapters":"No matches. Try a shorter term.";
+  }catch{searchStatus.textContent="Search unavailable. Browse chapter titles in the navigation.";}
+});
+document.addEventListener("keydown",event=>{if((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==="k"){event.preventDefault();if(!dialog.open)openSearch();}if(event.key==="Escape"&&document.body.classList.contains("nav-open")){document.body.classList.remove("nav-open");menu?.setAttribute("aria-expanded","false");}});
+async function renderDiagrams(){
+  const nodes=[...document.querySelectorAll("pre.mermaid")];if(!nodes.length)return;
+  try{
+    const {default:mermaid}=await import("https://cdn.jsdelivr.net/npm/mermaid@12.2.0/dist/mermaid.esm.min.mjs");
+    mermaid.initialize({startOnLoad:false,securityLevel:"strict",theme:"neutral",flowchart:{htmlLabels:false}});
+    for(let i=0;i<nodes.length;i++){const node=nodes[i],source=node.textContent;try{const {svg}=await mermaid.render("knowledge-diagram-"+i,source);const preview=document.createElement("div");preview.className="mermaid-preview";preview.setAttribute("role","img");preview.setAttribute("aria-label",node.closest("figure")?.querySelector("figcaption")?.textContent||"Architecture diagram");preview.innerHTML=svg;node.replaceWith(preview);}catch{const message=document.createElement("p");message.className="diagram-warning";message.textContent="This diagram could not render. Read or copy its source below.";node.before(message);}}
+  }catch{announce("Diagram previews unavailable; complete Mermaid source remains visible.");}
+}
+renderDiagrams();

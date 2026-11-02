@@ -1,38 +1,42 @@
-# Architecture and maintenance
+# Knowledge Center Architecture
 
-## Actual application
+Version 2.1.0 — reviewed 2 November 2026
+
+## Current application
+
+The production source is a collection of complete standalone HTML chapters. Each HTML embeds its article, examples, Mermaid source, table of contents and navigation. index.html displays Overview and preserves recognized legacy hash redirects. The twenty-five distinct chapters are searchable through a static generated JSON index.
 
 ```mermaid
 flowchart TD
-  A["Repository main"] --> B["GitHub Actions"]
-  B --> C["GitHub Pages"]
-  D["Cloudflare DNS CNAME"] --> C
-  C --> E["Browser"]
-  E --> F["Static React documentation reader"]
+  A["GitHub source and complete HTML"] --> B["Structural and script checks"]
+  B --> C["GitHub Pages deployment"]
+  C --> D["Browser chapter document"]
+  D --> E["Local CSS and optional enhancements"]
+  E --> F["Static search index"]
+  E --> G["Pinned Mermaid module"]
+  G --> H["Diagram preview"]
+  D --> I["Readable source without JavaScript"]
 ```
 
-The site is an exported single HTML document containing compiled React code and styles. It renders into #root. Browser state controls theme, search, active section and the mobile menu. IntersectionObserver tracks visible sections. URL hashes support direct section links and history navigation. There are no server APIs, secrets, persistent user records or agent runtimes.
+Cloudflare supplies DNS for the intended custom domain. GitHub Pages supplies hosting. No database, SMTP transport, authentication server or model inference backend is enabled by this documentation site. Those technologies are instructional subjects.
 
-## Files
+## Boundaries and features
 
-| Path | Role |
-| --- | --- |
-| index.html | Exported application, inline styles and scripts |
-| favicon.svg | Same geometry and red accent as the application logo |
-| CNAME | Intended custom hostname |
-| .github/workflows/static.yml | GitHub Pages publication |
-| README.md | Project entry point and preserved reference playbook |
-| docs/ | User and operational guides |
-| CHANGELOG.md | Application release notes |
+- HTML is the authoritative reader-facing content; no React hydration or content API is required.
+- assets/chapters.css supplies responsive desktop, mobile, keyboard-focus and print presentation.
+- assets/chapters.js adds copy controls, code wrapping, persistent theme preference, navigation filtering, full chapter search, reading progress and diagram previews.
+- assets/search-index.json includes title, URL and text for every distinct chapter. It contains public content only.
+- Mermaid is loaded from a version-pinned CDN. Strict rendering applies; one invalid diagram does not prevent other previews. Copyable source remains visible if the CDN fails.
+- Search results use textContent and createElement rather than interpreting indexed content as HTML.
+- Clipboard denial falls back to a user-triggered legacy copy attempt; failure is announced accessibly.
+- Theme preference is stored locally; storage denial does not prevent reading.
 
-## Editing
+## Validation and release
 
-Keep each navigation ID aligned with its section ID and the guide. The navigation array eu contains labels and IDs; nu is the main compiled component; tu renders the existing logo. The browser-title effect derives its label from the navigation array. favicon.svg reuses tu's path and circles on a dark background.
+scripts/check_docs.py uses Python's standard library to check headings, landmarks, active navigation, duplicate IDs, local assets, same-page anchors and index coverage. The publishing workflow runs it and a JavaScript syntax check before uploading Pages content.
 
-Because this is compiled output, make small targeted edits and check JavaScript syntax before publication. For major redesigns, establish maintainable source files and a reproducible build before replacing this export. Preserve third-party license comments in the embedded runtime.
+Structural checks passed on all twenty-six HTML documents during this review. These checks do not establish visual rendering, clipboard permission, Mermaid CDN access or live custom-domain TLS. Validate those in the target browser after deployment.
 
-## Validation and limitations
+## Maintenance
 
-Check script parsing, all nine section targets, metadata and favicon links. Then verify behavior in a browser using the deployment checklist. Syntax checks do not prove rendering or live HTTPS.
-
-The current article's orchestration, cloud, monitoring and billing examples describe systems a reader could build. They are not dependencies or features of this static site. Model names, platform details and quantitative estimates in the original playbook need independent verification before operational use.
+Update the HTML and matching search-index entry together. The search coverage check detects missing chapter records, but semantic freshness requires review. Maintain previous/next links and page outlines when adding sections. Private information must not be placed in HTML or the search index. Remove superseded renderer assets only after confirming no active HTML references them.
