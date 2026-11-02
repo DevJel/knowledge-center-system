@@ -2,14 +2,14 @@
 
 Version 1.0.0 · Reviewed 3 November 2026
 
-## Deployed service
+## Current deployment and source state
 
 Worker: knowledge-center-updates  
 Cloudflare account: Jelvan - Projects - Works (f4411b0d8a7a6d0188d924b95344f149)  
 KV namespace: knowledge-center-reference-updates (ff0e7c87fd1e42f1a3cb3972166dec64)  
 Binding: UPDATE_STATE  
-Read-only API: https://knowledge-center-updates.bolekpadjelvan.workers.dev  
-Cron: `0-26 0 * * *` — 08:00–08:25 daily in Asia/Kuala_Lumpur
+Existing deployed API: https://knowledge-center-updates.bolekpadjelvan.workers.dev  
+Cron: `0-26 0 * * *` — 08:00–08:26 daily in Asia/Kuala_Lumpur
 
 Each minute selects one of the twenty-seven registered chapters. The overview at index.html is an alias of overview.html and does not require a duplicate scheduled check. Cron configuration changes can take up to fifteen minutes to propagate.
 
@@ -46,7 +46,9 @@ The Worker embeds the same registry as config/chapters.json. The registry checke
 | GET /v1/chapters | Public chapter registry and scheduled minute |
 | GET /v1/chapters/worker-implementation | Latest state or explicit pending state for the Worker chapter |
 | GET /v1/chapters/otp | Latest state or explicit pending state for OTP |
-| POST to a public route | 405; readers cannot trigger a refresh |
+| POST to an unrecognized or non-refresh route | 405 |
+| POST /v1/refresh/{chapterId} with valid bearer secret | Immediate refresh of one registered chapter |
+| GET /v1/reviews/{chapterId} | Latest editorial review signals for that chapter |
 | Unknown chapter ID | 404 |
 | Browser request from an unapproved Origin | 403 |
 
@@ -62,7 +64,7 @@ curl -X POST \\
   https://knowledge-center-updates.bolekpadjelvan.workers.dev/v1/refresh/authentication
 ```
 
-The token must be configured as a Worker secret named `UPDATE_TRIGGER_TOKEN` before the manual endpoint can be used. The current source returns 503 until that secret is provisioned; an invalid token returns 401; an invalid token returns 401; an unknown chapter returns 404. Manual refresh bypasses the same-day schedule cache and checks only the selected chapter. It does not accept arbitrary URLs.
+The token must be configured as a Worker secret named `UPDATE_TRIGGER_TOKEN` before the manual endpoint can be used. The current source returns 503 until that secret is provisioned; an invalid token returns 401; an unknown chapter returns 404. Manual refresh bypasses the same-day schedule cache and checks only the selected chapter. It does not accept arbitrary URLs.
 
 When a mapped source heading changes or a source check fails, the Worker stores a review item in KV. Read the latest signals for a chapter with `GET /v1/reviews/{chapterId}`. Each item records source URL, observed status, heading outline or error, detection time and last successful check. These are review signals, not proof that the technical prose is wrong.
 
@@ -104,7 +106,7 @@ node --check assets/daily-updates.js
 
 The publishing workflow runs registry, search, structural, syntax and Worker logic checks. The seventeen Worker tests use deterministic mock responses; they do not claim that a real provider has been contacted. A live first run must be inspected separately through Cron event history and KV reports.
 
-Static publication and Worker deployment are separate. Pushing HTML to GitHub Pages does not deploy worker.mjs. To update the Worker, deploy its approved source and the real wrangler.jsonc in the intended account, or use the Cloudflare API. The previously deployed Worker has the 27-slot schedule and KV binding. The latest source changes add authenticated manual refresh and review-queue endpoints; those changes still require a Worker deployment and secret provisioning before the new endpoints are live.
+Static publication and Worker deployment are separate. Pushing HTML to GitHub Pages does not deploy worker.mjs. To update the Worker, deploy its approved source and the real wrangler.jsonc in the intended account, or use the Cloudflare API. The previously deployed Worker has the 27-slot schedule and KV binding. The latest repository source adds authenticated manual refresh and review-queue endpoints; these changes are not yet live. They require a Worker deployment and `UPDATE_TRIGGER_TOKEN` secret provisioning before the new endpoints become available.
 
 ## Maintenance and rollback
 
