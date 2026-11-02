@@ -1730,3 +1730,10 @@ dialog label{display:block;font-size:12px;color:var(--muted);margin:20px 0 8px}
 .brand-card img{object-fit:contain;flex:none}
 .brand-card span{display:grid;gap:5px;min-width:0}
 .brand-card small{font-size:12px;line-height:1.5;color:var(--muted)}
+
+/* Editorial source-review signals */
+.review-heading{margin:24px 0 4px;font-size:16px}
+.editorial-review{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:9px;padding:14px;background:var(--surface)}
+.editorial-review p{font-size:12px;line-height:1.65;color:var(--muted);margin:7px 0}
+.editorial-review .source-state{font-weight:750;color:var(--fg)}
+.review-signal{overflow-wrap:anywhere}
