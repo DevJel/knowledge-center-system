@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.4.0 — 3 November 2026
+
+- Expanded daily reference monitoring from title and heading comparison to a bounded normalized main-content fingerprint, so meaningful body changes can also create editorial review signals.
+- Added automated coverage for body-only changes, content extraction boundaries, the protected review route and manual refresh authorization.
+- Versioned the reference Worker as 1.2.0 and made health metadata accurately distinguish an available manual-refresh route from a configured manual-refresh secret.
+- Kept public editorial review read-only; source changes create review evidence and do not silently rewrite or publish technical guidance.
+
 ## 2.3.0 — 3 November 2026
 
 - Added a senior engineering walkthrough to all 27 standalone chapters, with topic-specific worked scenarios, ordered implementation steps, code examples, Mermaid process diagrams, operational measures and review checklists.
