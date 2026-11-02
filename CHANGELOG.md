@@ -2,6 +2,10 @@
 
 ## 2026-11-02
 
+- Added eleven engineering sections and forty-six topics covering storage, identity, sessions, OTP, SES SMTP, APIs, cloud, queues, AI security, testing and recovery.
+- Added official references and an engineering guide; aligned the original prototype hallucination threshold with its evaluation table.
+- Validation: expanded application JavaScript syntax check passed. Live browser validation remains outstanding.
+
 - Confirmed application name: MASTER AI - Knowledge Center; aligned header, hero, footer and browser-title suffix.
 
 - Added SVG favicon using the existing MASTER AI red hexagon and three-dot logo.
