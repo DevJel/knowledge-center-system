@@ -59,8 +59,8 @@ CORS permits the custom site and the GitHub Pages origin. It is not authenticati
 An authorized operator can request an immediate source check for one registered chapter:
 
 ```sh
-curl -X POST \\
-  -H 'Authorization: Bearer $UPDATE_TRIGGER_TOKEN' \\
+curl -X POST \
+  -H 'Authorization: Bearer $UPDATE_TRIGGER_TOKEN' \
   https://knowledge-center-updates.bolekpadjelvan.workers.dev/v1/refresh/authentication
 ```
 
