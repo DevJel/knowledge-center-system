@@ -21,6 +21,7 @@ Each topic has an independent HTML entry point. Shared JavaScript renders only t
 | 14 | APIs, Webhooks & Integrations | [apis.html](../apis.html) |
 | 15 | Cloud, DNS & Secrets | [infrastructure.html](../infrastructure.html) |
 | 16 | Queues, Jobs & Reliability | [queues.html](../queues.html) |
+| 26 | Web Application Engineering — End-to-End Blueprint | [web-application-engineering.html](../web-application-engineering.html) |
 | 17 | AI, RAG & Tool Security | [ai-security.html](../ai-security.html) |
 | 18 | Testing & Accessibility | [quality.html](../quality.html) |
 | 19 | Monitoring, Privacy & Recovery | [operations.html](../operations.html) |
