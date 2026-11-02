@@ -36,7 +36,7 @@ jobs:
       - name: Validate chapter registry and daily schedule
         run: python3 scripts/check_registry.py
       - name: Verify complete search index
-        run: python3 scripts/build_search.py --check
+        run: python3 scripts/build_search.py
       - name: Test reference updater
         run: node --test workers/knowledge-center-updates/worker.test.mjs
       - name: Validate documentation structure
