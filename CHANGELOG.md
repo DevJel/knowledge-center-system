@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.3.0 — 3 November 2026
+
+- Added a senior engineering walkthrough to all 27 standalone chapters, with topic-specific worked scenarios, ordered implementation steps, code examples, Mermaid process diagrams, operational measures and review checklists.
+- Expanded Worker source monitoring to create per-chapter editorial review signals and expose a read-only review queue.
+- Added source changes for secret-protected on-demand chapter refresh, with same-day cache bypass and authorization tests.
+- Updated the public chapter panels to display editorial review signals and aligned the daily schedule display to 08:00–08:26 Malaysia time.
+- The new Worker endpoints require deployment and `UPDATE_TRIGGER_TOKEN` provisioning before they become live; automatic publication of unreviewed technical prose remains disabled by design.
+
+
 ## 2.2.0 — 3 November 2026
 
 - Added Web Application Engineering end-to-end chapter covering UI, languages, identity, Duo, SSO, backend APIs, databases, storage, queues, security, testing, deployment and operations.
