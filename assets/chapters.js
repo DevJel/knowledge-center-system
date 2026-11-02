@@ -30,11 +30,11 @@ document.querySelectorAll(".code-block").forEach(block=>{
   wrap.addEventListener("click",()=>{const enabled=block.classList.toggle("wrap-code");wrap.setAttribute("aria-pressed",String(enabled));wrap.textContent=enabled?"Scroll code":"Wrap code";});
   label.append(wrap);
 });
-try{const theme=localStorage.getItem("knowledge-theme");document.body.classList.toggle("light",theme==="light");}catch{}
+try{const theme=localStorage.getItem("knowledge-theme");document.body.classList.toggle("dark",theme==="dark");document.body.classList.toggle("light",theme!=="dark");}catch{}
 const themeButton=$("[data-theme-toggle]");
-function syncTheme(){const light=document.body.classList.contains("light");themeButton?.setAttribute("aria-pressed",String(light));if(themeButton)themeButton.textContent=light?"Dark theme":"Light theme";}
+function syncTheme(){const light=!document.body.classList.contains("dark");themeButton?.setAttribute("aria-pressed",String(light));if(themeButton)themeButton.textContent=light?"Dark theme":"Light theme";}
 syncTheme();
-themeButton?.addEventListener("click",()=>{document.body.classList.toggle("light");syncTheme();try{localStorage.setItem("knowledge-theme",document.body.classList.contains("light")?"light":"dark");}catch{}});
+themeButton?.addEventListener("click",()=>{document.body.classList.toggle("dark");document.body.classList.toggle("light",!document.body.classList.contains("dark"));syncTheme();try{localStorage.setItem("knowledge-theme",document.body.classList.contains("dark")?"dark":"light");}catch{}});
 $("[data-print]")?.addEventListener("click",()=>window.print());
 document.body.classList.add("enhanced");
 const menu=$(".mobile-nav-toggle");
