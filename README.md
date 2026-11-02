@@ -18,6 +18,8 @@ Each topic now has its own HTML document and URL; the main page displays Overvie
 
 ## Guides
 
+- [Consistent chapter pattern and Knowledge Center features](docs/CHAPTER_PATTERN.md)
+
 - [Researched AI and LLM task matrix](docs/AI_RESEARCH.md)
 - [Mermaid diagram library](docs/DIAGRAMS.md)
 
