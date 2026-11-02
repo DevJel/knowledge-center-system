@@ -104,7 +104,7 @@ python3 scripts/check_docs.py .
 node --check assets/daily-updates.js
 ```
 
-The publishing workflow runs registry, search, structural, syntax and Worker logic checks. The seventeen Worker tests use deterministic mock responses; they do not claim that a real provider has been contacted. A live first run must be inspected separately through Cron event history and KV reports.
+The publishing workflow runs registry, search, structural, syntax and Worker logic checks. The eighteen Worker tests use deterministic mock responses; they do not claim that a real provider has been contacted. A live first run must be inspected separately through Cron event history and KV reports.
 
 Static publication and Worker deployment are separate. Pushing HTML to GitHub Pages does not deploy worker.mjs. To update the Worker, deploy its approved source and the real wrangler.jsonc in the intended account, or use the Cloudflare API. The previously deployed Worker has the 27-slot schedule and KV binding. The latest repository source adds authenticated manual refresh and review-queue endpoints; these changes are not yet live. They require a Worker deployment and `UPDATE_TRIGGER_TOKEN` secret provisioning before the new endpoints become available.
 
