@@ -5,6 +5,13 @@ A static, searchable development playbook hosted with GitHub Pages. This applica
 Custom domain: https://app-bible.jelvan.pro  
 Default Pages URL: https://devjel.github.io/knowledge-center-system/
 
+## Separate HTML pages
+
+Each topic now has its own HTML document and URL; the main page displays Overview only. Shared assets live in assets/. Navigation loads a new document rather than scrolling through all topics. Legacy index.html hash links redirect to the matching HTML page.
+
+- [Detailed Page 1 HTML](chapter-01-production-ai-architecture.html)
+- [Page map](docs/HTML_PAGES.md)
+
 ## Standalone technical chapters
 
 1. [Production AI Application Architecture and Request Lifecycle](docs/pages/01-production-ai-architecture.md) — version 1.0.0, reviewed 2 November 2026. Includes complete TypeScript lifecycle and acceptance tests, policy configuration, failure analysis and Mermaid diagrams.

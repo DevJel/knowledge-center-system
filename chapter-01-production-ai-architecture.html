@@ -1,0 +1,445 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Page 1 — Production AI Architecture | MASTER AI - Knowledge Center</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./assets/chapter.css"></head><body><aside><a href="./index.html" class="brand">MASTER AI<br>Knowledge Center</a><nav><a href="./overview.html">00 · Overview &amp; Vision</a><a href="./phase1.html">01 · Phase 1: Discovery &amp; Scoping</a><a href="./phase2.html">02 · Phase 2: System Architecture</a><a href="./phase3.html">03 · Phase 3: Data &amp; Prototyping</a><a href="./phase4.html">04 · Phase 4: Agent Development</a><a href="./phase5.html">05 · Phase 5: Client-in-the-Loop</a><a href="./phase6.html">06 · Phase 6: Deployment</a><a href="./phase7.html">07 · Phase 7: Post-Launch &amp; Scale</a><a href="./appendices.html">08 · Appendices</a><a href="./databases.html">09 · Databases &amp; Storage</a><a href="./authentication.html">10 · Authentication &amp; SSO</a><a href="./sessions.html">11 · Sessions &amp; Authorization</a><a href="./otp.html">12 · Email OTP &amp; Recovery</a><a href="./email.html">13 · Email Sending &amp; Deliverability</a><a href="./apis.html">14 · APIs, Webhooks &amp; Integrations</a><a href="./infrastructure.html">15 · Cloud, DNS &amp; Secrets</a><a href="./queues.html">16 · Queues, Jobs &amp; Reliability</a><a href="./ai-security.html">17 · AI, RAG &amp; Tool Security</a><a href="./quality.html">18 · Testing &amp; Accessibility</a><a href="./operations.html">19 · Monitoring, Privacy &amp; Recovery</a><a href="./llm-selection.html">20 · LLMs by AI Task</a><a href="./ai-updates.html">21 · AI Research &amp; Updates</a><a href="./model-routing.html">22 · Model Routing &amp; Evaluation</a><a href="./mermaid-diagrams.html">23 · Mermaid Diagrams</a><a href="./chapter-01-production-ai-architecture.html" aria-current="page">Page 1 · Production AI Architecture</a></nav></aside><main><div class="tools"><button id="copy-page">Copy page</button><button id="copy-link">Copy link</button><span id="copy-status" role="status"></span></div><article><h1>Page 1 — Production AI Application Architecture and Request Lifecycle</h1><div class='table-wrap'><table><tr><th>Metadata</th><th>Value</th></tr><tr><td>Document version</td><td>1.0.0</td></tr><tr><td>Last reviewed</td><td>2 November 2026</td></tr><tr><td>Target scope</td><td>Tenant-aware, server-controlled AI inference service; TypeScript application core; GitHub CI; Cloudflare application hosting; managed model adapters</td></tr><tr><td>Audience</td><td>Platform engineers, application developers, security reviewers and operations owners</td></tr><tr><td>Implementation boundary</td><td>A complete, provider-independent request-lifecycle module and executable acceptance tests. Identity verification, durable accounting and provider transport are explicit service contracts.</td></tr><tr><td>Release status</td><td>Architecture reference. Production approval requires the verification matrix below to pass against the actual deployed dependencies.</td></tr></table></div><h2>1. Architectural overview and governing principles</h2><p>An AI application must control more than model invocation. It must determine who is asking, which tenant owns the request, whether the requested operation is permitted, which data may leave the system, how much work is affordable, and what happens if the client or provider fails halfway through processing.</p><p>The model is an untrusted computational dependency. It does not establish identity, assign roles, choose unrestricted network destinations or authorize side effects. The application makes these decisions before invoking it and validates its result afterward. A model-generated string cannot change a permission policy.</p><p>The request lifecycle below supports bounded text inference without tools. Tool execution, retrieval, email delivery and account enrollment are separate service capabilities. Their absence is deliberate: an inference endpoint must not accidentally acquire authority to send messages or mutate business records simply because a model supports function calling.</p><h3>1.1 Trust boundaries</h3><figure><pre class="mermaid">flowchart TD
+  U[&quot;Untrusted client&quot;] --&gt; G[&quot;Request gateway&quot;]
+  G --&gt; I[&quot;Identity and tenant checks&quot;]
+  I --&gt; A{&quot;Admission policy&quot;}
+  A --&gt;|Reject| R[&quot;Safe error&quot;]
+  A --&gt;|Admit| B[&quot;Durable budget reservation&quot;]
+  B --&gt; M[&quot;Scoped model adapter&quot;]
+  M --&gt; V[&quot;Response validation&quot;]
+  V --&gt; S[&quot;Accounting settlement&quot;]
+  S --&gt; O[&quot;Response and redacted audit&quot;]</pre><details open><summary>Mermaid source</summary><div class="code"><button class="copy-code">Copy Mermaid</button><pre><code>flowchart TD
+  U[&quot;Untrusted client&quot;] --&gt; G[&quot;Request gateway&quot;]
+  G --&gt; I[&quot;Identity and tenant checks&quot;]
+  I --&gt; A{&quot;Admission policy&quot;}
+  A --&gt;|Reject| R[&quot;Safe error&quot;]
+  A --&gt;|Admit| B[&quot;Durable budget reservation&quot;]
+  B --&gt; M[&quot;Scoped model adapter&quot;]
+  M --&gt; V[&quot;Response validation&quot;]
+  V --&gt; S[&quot;Accounting settlement&quot;]
+  S --&gt; O[&quot;Response and redacted audit&quot;]</code></pre></div></details></figure><p>The client boundary accepts only a task name, an input string and an output-token ceiling. Tenant membership and permissions arrive from authenticated server state. The adapter boundary translates the application contract into one provider's current API. Budget enforcement happens in a durable accounting boundary shared by all application instances.</p><p>Each boundary has an independent failure policy. Authentication failure must not fall through to an anonymous paid request. Budget failure must not invoke the model. A provider timeout is an uncertain outcome because processing may continue remotely. A settlement failure must not silently discard the accounting obligation.</p><h3>1.2 Non-negotiable invariants</h3><p>1. Every admitted request has a verified principal with an active tenant membership.</p><p>2. Every model call follows a successful budget reservation.</p><p>3. The reservation precedes the side effect and includes a unique request identifier.</p><p>4. Provider selection comes from an approved server registry, never a client-supplied URL.</p><p>5. Unsupported tasks and token limits fail before provider invocation.</p><p>6. A timeout or transport failure retains its reservation until reconciliation establishes usage or releases it safely.</p><p>7. Prompts, API credentials, session tokens and generated private text are excluded from routine logs.</p><p>8. The provider's answer remains data. Rendering it must not execute HTML, scripts or commands.</p><h2>2. Detailed system mechanics</h2><h3>2.1 Identity and authorization</h3><p>The HTTP authentication layer verifies the session or access token and constructs a Principal. The principal's user ID, tenant ID and permission set must come from the verified identity and membership records. A browser-submitted tenant header is merely a requested tenant and must be checked against membership.</p><p>A permission check applies to the operation, not just the page. A user who can view the chat interface does not automatically have permission to invoke every model, export tenant knowledge or execute administrative tools. The reference module requires the ai:generate permission and an active membership.</p><p>Permission changes introduce cache invalidation requirements. A suspended account must lose access within the defined revocation window. If membership is cached, document the maximum stale interval and bypass that cache for privileged actions. Tokens with tenant or role claims require server-side validation and a strategy for revocation.</p><h3>2.2 Input boundaries and token accounting</h3><p>Limit HTTP body bytes before parsing JSON. After parsing, reject unknown properties, invalid types, blank inputs and unsupported tasks. A character limit is not a token estimate: UTF-8 byte length, Unicode code points and provider tokenization differ.</p><p>The accounting service must reserve a conservative upper bound derived from the full provider request: developer instructions, user input, retrieved context, tool schemas, image/audio charges when applicable, the output ceiling and the provider's billing model. The reference uses reservation units rather than money to avoid pretending that a single universal price calculation fits every model.</p><p>Provider usage is authoritative only after validating the response schema. Missing usage is an accounting uncertainty, not zero cost. For metered production systems, reconcile provider billing records against application reservations.</p><h3>2.3 Registry and task routing</h3><p>A registry entry records the task, adapter key, approved model ID, token ceiling and data-processing policy. At deployment, validate each entry against the provider's current capability schema. A model supporting text input does not necessarily support a particular structured-output format, tool schema or reasoning parameter.</p><p>As of this review, official catalogs list GPT-6 Astra, GPT-6.1 Sol, GPT-6.1 Terra and GPT-6 Luna; Claude Fable 5.1, Opus 5.5, Sonnet 5.5 and Haiku 5.5; and Gemini 4 Argon and Gemini 3.8 Flash. These are candidate families, not interchangeable endpoint contracts. Choose a model using representative task evaluations and verify account availability. The code below intentionally does not hardcode a provider or a model alias.</p><h3>2.4 Budget lifecycle and uncertain completion</h3><figure><pre class="mermaid">stateDiagram-v2
+  [*] --&gt; Reserved: atomic admission
+  Reserved --&gt; Settled: verified usage
+  Reserved --&gt; HeldForReconciliation: timeout or unknown outcome
+  HeldForReconciliation --&gt; Settled: usage recovered
+  HeldForReconciliation --&gt; Released: confirmed no charge
+  Settled --&gt; [*]
+  Released --&gt; [*]</pre><details open><summary>Mermaid source</summary><div class="code"><button class="copy-code">Copy Mermaid</button><pre><code>stateDiagram-v2
+  [*] --&gt; Reserved: atomic admission
+  Reserved --&gt; Settled: verified usage
+  Reserved --&gt; HeldForReconciliation: timeout or unknown outcome
+  HeldForReconciliation --&gt; Settled: usage recovered
+  HeldForReconciliation --&gt; Released: confirmed no charge
+  Settled --&gt; [*]
+  Released --&gt; [*]</code></pre></div></details></figure><p>A reservation is not an in-memory counter. Implement it with a transactional store or a coordination mechanism that can atomically compare the tenant's available allowance and create the reservation. Concurrent requests must not overspend by observing the same balance.</p><p>Reservation IDs and request IDs must be unique within the intended scope. A retry of an already completed request should retrieve the persisted result or return its existing status instead of spending again. This module generates a new request ID per execution and does not claim HTTP-level idempotency. Add a durable idempotency coordinator before exposing retryable paid mutations.</p><p>The adapter may fail after a provider accepted the request. Releasing the entire reservation on every exception allows repeated uncertain requests to bypass spending limits. The safe default is to retain the reservation and enqueue reconciliation. Record expiry and escalation rules so held funds do not remain locked forever.</p><h3>2.5 Timeouts, cancellation and retries</h3><p>Propagate AbortSignal to the provider transport. A local abort does not prove that the remote provider stopped computation. The deadline implementation races the transport promise so the caller is bounded even if an adapter fails to honor cancellation.</p><p>Do not retry a model call automatically after an ambiguous timeout. Retrying can duplicate charges and produce two divergent outputs. Explicit retries must pass admission again and honor the request's durable idempotency state. Rate-limit responses may support a delayed retry, but only within a documented attempt and time budget.</p><h3>2.6 Output safety</h3><p>An adapter returns text and measured usage through a narrow object contract. The core rejects empty answers, oversized UTF-8 responses and malformed usage. A provider's refusal, incomplete generation and tool-call response require explicit adapter handling; they must not be disguised as successful plain-text completion.</p><p>Render model output as text or sanitized Markdown. Do not place it in an unsanitized innerHTML assignment. Treat generated URLs, shell commands, SQL statements and email recipients as untrusted proposals requiring separate validation and authorization.</p><h2>3. Production implementation pattern</h2><p>The following TypeScript module has no third-party runtime dependencies. It can be compiled with TypeScript targeting ES2022 and the DOM library. It defines all application contracts and the complete orchestration logic within this chapter's boundary.</p><h3>3.1 src/lifecycle.ts</h3><div class="code"><button class="copy-code">Copy typescript</button><pre><code>export type Task = &quot;assistant&quot; | &quot;code_review&quot;;
+
+export interface Principal {
+  userId: string;
+  tenantId: string;
+  membershipActive: boolean;
+  permissions: ReadonlySet&lt;string&gt;;
+}
+
+export interface GenerationRequest {
+  task: Task;
+  input: string;
+  maxOutputTokens: number;
+}
+
+export interface ModelPolicy {
+  adapterKey: string;
+  modelId: string;
+  maxOutputTokens: number;
+}
+
+export interface Usage {
+  inputTokens: number;
+  outputTokens: number;
+}
+
+export interface ModelResult {
+  text: string;
+  usage: Usage;
+}
+
+export interface ModelAdapter {
+  generate(
+    policy: ModelPolicy,
+    request: GenerationRequest,
+    signal: AbortSignal
+  ): Promise&lt;ModelResult&gt;;
+}
+
+export interface BudgetLedger {
+  reserve(input: {
+    requestId: string;
+    tenantId: string;
+    policy: ModelPolicy;
+    request: GenerationRequest;
+  }): Promise&lt;{ reservationId: string }&gt;;
+  settle(reservationId: string, usage: Usage): Promise&lt;void&gt;;
+  holdForReconciliation(
+    reservationId: string,
+    requestId: string
+  ): Promise&lt;void&gt;;
+}
+
+export interface AuditEvent {
+  requestId: string;
+  tenantId: string;
+  task: Task;
+  outcome: &quot;completed&quot; | &quot;failed&quot; | &quot;reconciliation_failed&quot;;
+  durationMs: number;
+}
+
+export interface Dependencies {
+  policies: Readonly&lt;Record&lt;Task, ModelPolicy&gt;&gt;;
+  adapters: ReadonlyMap&lt;string, ModelAdapter&gt;;
+  ledger: BudgetLedger;
+  audit(event: AuditEvent): void;
+  now(): number;
+  requestId(): string;
+  timeoutMs: number;
+  maxAnswerBytes: number;
+}
+
+export class LifecycleError extends Error {
+  constructor(
+    public readonly code: string,
+    public readonly httpStatus: number
+  ) {
+    super(code);
+    this.name = &quot;LifecycleError&quot;;
+  }
+}
+
+export function parseRequest(value: unknown): GenerationRequest {
+  if (!value || typeof value !== &quot;object&quot; || Array.isArray(value)) {
+    throw new LifecycleError(&quot;invalid_request&quot;, 400);
+  }
+
+  const item = value as Record&lt;string, unknown&gt;;
+  const allowed = new Set([&quot;task&quot;, &quot;input&quot;, &quot;maxOutputTokens&quot;]);
+  if (Object.keys(item).some((key) =&gt; !allowed.has(key))) {
+    throw new LifecycleError(&quot;unknown_property&quot;, 400);
+  }
+  if (item.task !== &quot;assistant&quot; &amp;&amp; item.task !== &quot;code_review&quot;) {
+    throw new LifecycleError(&quot;unsupported_task&quot;, 400);
+  }
+  if (
+    typeof item.input !== &quot;string&quot; ||
+    item.input.trim().length === 0 ||
+    new TextEncoder().encode(item.input).byteLength &gt; 16_384
+  ) {
+    throw new LifecycleError(&quot;invalid_input&quot;, 400);
+  }
+  if (
+    typeof item.maxOutputTokens !== &quot;number&quot; ||
+    !Number.isSafeInteger(item.maxOutputTokens) ||
+    item.maxOutputTokens &lt; 1 ||
+    item.maxOutputTokens &gt; 4_096
+  ) {
+    throw new LifecycleError(&quot;invalid_output_limit&quot;, 400);
+  }
+
+  return {
+    task: item.task,
+    input: item.input,
+    maxOutputTokens: item.maxOutputTokens
+  };
+}
+
+function validateUsage(usage: Usage): void {
+  if (
+    !usage ||
+    !Number.isSafeInteger(usage.inputTokens) ||
+    usage.inputTokens &lt; 0 ||
+    !Number.isSafeInteger(usage.outputTokens) ||
+    usage.outputTokens &lt; 0
+  ) {
+    throw new LifecycleError(&quot;invalid_provider_usage&quot;, 502);
+  }
+}
+
+export async function generate(
+  principal: Principal,
+  raw: unknown,
+  deps: Dependencies
+): Promise&lt;{ requestId: string; text: string; usage: Usage }&gt; {
+  if (
+    !principal.userId ||
+    !principal.tenantId ||
+    !principal.membershipActive ||
+    !principal.permissions.has(&quot;ai:generate&quot;)
+  ) {
+    throw new LifecycleError(&quot;forbidden&quot;, 403);
+  }
+
+  const request = parseRequest(raw);
+  const policy = deps.policies[request.task];
+  if (
+    !policy ||
+    !policy.modelId ||
+    request.maxOutputTokens &gt; policy.maxOutputTokens
+  ) {
+    throw new LifecycleError(&quot;task_policy_rejected&quot;, 400);
+  }
+
+  const adapter = deps.adapters.get(policy.adapterKey);
+  if (!adapter) {
+    throw new LifecycleError(&quot;adapter_unavailable&quot;, 503);
+  }
+  if (
+    !Number.isSafeInteger(deps.timeoutMs) ||
+    deps.timeoutMs &lt; 1 ||
+    !Number.isSafeInteger(deps.maxAnswerBytes) ||
+    deps.maxAnswerBytes &lt; 1
+  ) {
+    throw new LifecycleError(&quot;invalid_runtime_policy&quot;, 503);
+  }
+
+  const requestId = deps.requestId();
+  const started = deps.now();
+  const reservation = await deps.ledger.reserve({
+    requestId,
+    tenantId: principal.tenantId,
+    policy,
+    request
+  });
+
+  let timer: ReturnType&lt;typeof setTimeout&gt; | undefined;
+  const controller = new AbortController();
+  const emit = (outcome: AuditEvent[&quot;outcome&quot;]): void =&gt; {
+    try {
+      deps.audit({
+        requestId,
+        tenantId: principal.tenantId,
+        task: request.task,
+        outcome,
+        durationMs: Math.max(0, deps.now() - started)
+      });
+    } catch {
+      // Audit transport health must be monitored independently.
+      // Never expose private provider errors through this path.
+    }
+  };
+
+  try {
+    const deadline = new Promise&lt;never&gt;((_, reject) =&gt; {
+      timer = setTimeout(() =&gt; {
+        controller.abort();
+        reject(new LifecycleError(&quot;provider_timeout&quot;, 504));
+      }, deps.timeoutMs);
+    });
+
+    const result = await Promise.race([
+      adapter.generate(policy, request, controller.signal),
+      deadline
+    ]);
+    validateUsage(result.usage);
+
+    if (
+      typeof result.text !== &quot;string&quot; ||
+      result.text.trim().length === 0 ||
+      new TextEncoder().encode(result.text).byteLength &gt;
+        deps.maxAnswerBytes
+    ) {
+      throw new LifecycleError(&quot;invalid_provider_output&quot;, 502);
+    }
+
+    await deps.ledger.settle(reservation.reservationId, result.usage);
+    emit(&quot;completed&quot;);
+    return { requestId, text: result.text, usage: result.usage };
+  } catch (error) {
+    try {
+      await deps.ledger.holdForReconciliation(
+        reservation.reservationId,
+        requestId
+      );
+    } catch {
+      emit(&quot;reconciliation_failed&quot;);
+    }
+    emit(&quot;failed&quot;);
+    if (error instanceof LifecycleError) {
+      throw error;
+    }
+    throw new LifecycleError(&quot;generation_failed&quot;, 502);
+  } finally {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+    }
+  }
+}</code></pre></div><h3>3.2 Contract requirements for dependency implementations</h3><p>The ledger's reserve operation must reject exhausted or suspended tenants before returning a reservation ID. Settle must be idempotent and must not double-charge when the same usage is submitted twice. Hold must not overwrite a previously settled reservation. Because settlement itself can fail after committing, reconciliation must inspect durable state before applying another charge.</p><p>Ledger operations require their own bounded storage deadlines. The model deadline does not bound a stalled database call. The HTTP host should enforce an overall request deadline and reserve time for reconciliation or dispatch that work durably. An execution context's background callback is not a substitute for a durable queue when losing work would lose billing records.</p><p>The adapter must enforce its own response-body size limit before parsing, translate provider-specific refusal/incomplete states into typed failures, and validate usage fields. It must not accept a request-provided base URL. API credentials belong in managed secrets and must not appear in policies or audit events.</p><p>The audit implementation should be nonblocking and feed a monitored transport with a defined loss policy. A deployment requiring fail-closed compliance audit must reject admission when durable audit is unavailable; the reference's best-effort telemetry hook does not satisfy that stronger requirement.</p><h2>4. Complete executable acceptance test</h2><p>The test uses an in-memory ledger only as a deterministic test double. It is not a production accounting implementation and does not claim distributed atomicity.</p><h3>4.1 src/lifecycle.test.ts</h3><div class="code"><button class="copy-code">Copy typescript</button><pre><code>import {
+  generate,
+  LifecycleError,
+  type BudgetLedger,
+  type Dependencies,
+  type ModelAdapter,
+  type Principal,
+  type Usage
+} from &quot;./lifecycle.js&quot;;
+
+function assert(condition: unknown, message: string): asserts condition {
+  if (!condition) throw new Error(message);
+}
+
+async function rejects(
+  operation: () =&gt; Promise&lt;unknown&gt;,
+  code: string
+): Promise&lt;void&gt; {
+  try {
+    await operation();
+  } catch (error) {
+    assert(error instanceof LifecycleError, &quot;Expected LifecycleError&quot;);
+    assert(error.code === code, &quot;Unexpected error code&quot;);
+    return;
+  }
+  throw new Error(&quot;Expected rejection&quot;);
+}
+
+const states = new Map&lt;string, string&gt;();
+let reservations = 0;
+let adapterCalls = 0;
+
+const ledger: BudgetLedger = {
+  async reserve(input) {
+    reservations += 1;
+    states.set(input.requestId, &quot;reserved&quot;);
+    return { reservationId: input.requestId };
+  },
+  async settle(id: string, usage: Usage) {
+    assert(usage.outputTokens &gt;= 0, &quot;Invalid usage&quot;);
+    states.set(id, &quot;settled&quot;);
+  },
+  async holdForReconciliation(id: string) {
+    if (states.get(id) !== &quot;settled&quot;) states.set(id, &quot;held&quot;);
+  }
+};
+
+const adapter: ModelAdapter = {
+  async generate() {
+    adapterCalls += 1;
+    return {
+      text: &quot;Validated response&quot;,
+      usage: { inputTokens: 12, outputTokens: 4 }
+    };
+  }
+};
+
+let sequence = 0;
+const deps: Dependencies = {
+  policies: {
+    assistant: {
+      adapterKey: &quot;test&quot;,
+      modelId: &quot;deterministic-test-adapter&quot;,
+      maxOutputTokens: 1024
+    },
+    code_review: {
+      adapterKey: &quot;test&quot;,
+      modelId: &quot;deterministic-test-adapter&quot;,
+      maxOutputTokens: 1024
+    }
+  },
+  adapters: new Map([[&quot;test&quot;, adapter]]),
+  ledger,
+  audit() {},
+  now: () =&gt; Date.now(),
+  requestId: () =&gt; &quot;request-&quot; + (++sequence),
+  timeoutMs: 50,
+  maxAnswerBytes: 4096
+};
+
+const principal: Principal = {
+  userId: &quot;test-user&quot;,
+  tenantId: &quot;test-tenant&quot;,
+  membershipActive: true,
+  permissions: new Set([&quot;ai:generate&quot;])
+};
+
+const input = {
+  task: &quot;assistant&quot;,
+  input: &quot;Explain a transactional outbox.&quot;,
+  maxOutputTokens: 128
+};
+
+const result = await generate(principal, input, deps);
+assert(result.text === &quot;Validated response&quot;, &quot;Wrong response&quot;);
+assert(states.get(result.requestId) === &quot;settled&quot;, &quot;Not settled&quot;);
+
+const beforeDenied = reservations;
+await rejects(
+  () =&gt; generate({ ...principal, membershipActive: false }, input, deps),
+  &quot;forbidden&quot;
+);
+assert(reservations === beforeDenied, &quot;Denied request reserved budget&quot;);
+
+await rejects(
+  () =&gt; generate(principal, { ...input, model: &quot;client-choice&quot; }, deps),
+  &quot;unknown_property&quot;
+);
+
+const failing: ModelAdapter = {
+  async generate() {
+    throw new Error(&quot;Sensitive upstream detail&quot;);
+  }
+};
+await rejects(
+  () =&gt; generate(principal, input, {
+    ...deps,
+    adapters: new Map([[&quot;test&quot;, failing]])
+  }),
+  &quot;generation_failed&quot;
+);
+assert(states.get(&quot;request-&quot; + sequence) === &quot;held&quot;, &quot;Failure not held&quot;);
+
+const stalled: ModelAdapter = {
+  async generate() {
+    return new Promise(() =&gt; {});
+  }
+};
+await rejects(
+  () =&gt; generate(principal, input, {
+    ...deps,
+    timeoutMs: 5,
+    adapters: new Map([[&quot;test&quot;, stalled]])
+  }),
+  &quot;provider_timeout&quot;
+);
+assert(states.get(&quot;request-&quot; + sequence) === &quot;held&quot;, &quot;Timeout not held&quot;);
+assert(adapterCalls === 1, &quot;Unexpected successful adapter calls&quot;);
+console.log(&quot;Lifecycle acceptance tests passed&quot;);</code></pre></div><h3>4.2 Compiler configuration</h3><p>Save this complete configuration as tsconfig.json. Install TypeScript as a development dependency, commit the generated package lock, and use the same locked compiler in CI.</p><div class="code"><button class="copy-code">Copy json</button><pre><code>{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;ES2022&quot;,
+    &quot;module&quot;: &quot;NodeNext&quot;,
+    &quot;moduleResolution&quot;: &quot;NodeNext&quot;,
+    &quot;lib&quot;: [&quot;ES2022&quot;, &quot;DOM&quot;],
+    &quot;strict&quot;: true,
+    &quot;outDir&quot;: &quot;dist&quot;,
+    &quot;rootDir&quot;: &quot;src&quot;,
+    &quot;skipLibCheck&quot;: true,
+    &quot;noEmitOnError&quot;: true
+  },
+  &quot;include&quot;: [&quot;src/**/*.ts&quot;]
+}</code></pre></div><p>Set the package's type field to module so the test's top-level await uses ECMAScript modules. Run the compiler followed by the emitted test:</p><div class="code"><button class="copy-code">Copy sh</button><pre><code>npm pkg set type=module
+npm install --save-dev typescript
+npx tsc --project tsconfig.json
+node dist/lifecycle.test.js</code></pre></div><p>Do not substitute synthetic model IDs into a live provider. The deterministic-test-adapter string is a real test fixture identifier consumed only by the test double.</p><h2>5. Deployment configuration and secret boundaries</h2><p>This chapter's module does not start a public HTTP listener. Integrate it behind the application's authenticated gateway, then bind concrete ledger and provider adapters. Publishing a raw unauthenticated wrapper would violate the invariants in Section 1.</p><p>For a Cloudflare deployment, keep the compatibility date explicit and use version-controlled non-secret configuration. Provision provider credentials as Worker secrets or approved Secret Store bindings. Verify each environment separately because resource and secret binding behavior must not be assumed to inherit across environments.</p><p>The following is an application policy document, not a Wrangler manifest. An admission configuration loader must validate every property and reject unknown keys.</p><div class="code"><button class="copy-code">Copy yaml</button><pre><code>version: 1
+request_policy:
+  maximum_body_bytes: 24576
+  maximum_input_utf8_bytes: 16384
+  maximum_output_tokens: 4096
+  maximum_answer_utf8_bytes: 65536
+  model_deadline_ms: 25000
+  require_active_membership: true
+  required_permission: ai:generate
+  automatic_provider_retries: 0
+accounting_policy:
+  reserve_before_inference: true
+  unknown_outcome: hold_for_reconciliation
+  settlement_idempotency: required
+logging_policy:
+  include_request_id: true
+  include_tenant_id: true
+  include_duration: true
+  include_prompt: false
+  include_generated_text: false
+  include_credentials: false</code></pre></div><p>The limits are deliberately local policy values, not provider quotas. The gateway body limit is larger than the input-string limit to allow JSON syntax and metadata while bounding memory use. The output byte ceiling is independent of output-token limits. A generated Unicode answer can consume more bytes than its visible length suggests.</p><p>A Docker image is not needed for the Workers runtime. Container deployment is a separate target requiring its own HTTP server, signal handling, health checks and secret injection. Including a nonfunctional Dockerfile would make this chapter less complete, not more deployable.</p><h2>6. Acceptance, testing and verification matrix</h2><div class='table-wrap'><table><tr><th>Area</th><th>Concrete test</th><th>Required result</th></tr><tr><td>Identity</td><td>Expired session reaches gateway</td><td>401 before lifecycle invocation; no reservation or model call</td></tr><tr><td>Authorization</td><td>Inactive membership or missing permission</td><td>403; no provider activity</td></tr><tr><td>Tenant isolation</td><td>Client changes tenant header or object ID</td><td>Membership check rejects unauthorized tenant</td></tr><tr><td>Input schema</td><td>Unknown property, blank input, array body, unsupported task</td><td>400 before reservation</td></tr><tr><td>Unicode</td><td>Input exceeds 16,384 UTF-8 bytes with multibyte characters</td><td>Rejected using encoded byte length</td></tr><tr><td>Token policy</td><td>Output ceiling exceeds registry maximum</td><td>Rejected before inference</td></tr><tr><td>Registry</td><td>Adapter missing or model unapproved</td><td>Fail closed; no user-controlled fallback</td></tr><tr><td>Budget concurrency</td><td>Parallel requests compete for final allowance</td><td>Durable ledger admits only affordable reservations</td></tr><tr><td>Successful completion</td><td>Adapter returns valid text and usage</td><td>Exactly one idempotent settlement and safe response</td></tr><tr><td>Provider transport</td><td>Connection resets after request submission</td><td>Reservation retained for reconciliation</td></tr><tr><td>Timeout</td><td>Adapter ignores AbortSignal</td><td>Caller still receives bounded timeout</td></tr><tr><td>Output</td><td>Empty text, oversized bytes or invalid usage</td><td>502; uncertain spend remains reserved</td></tr><tr><td>Settlement uncertainty</td><td>Database commits then connection fails</td><td>Reconciliation reads existing state; no duplicate charge</td></tr><tr><td>Telemetry</td><td>Audit destination fails</td><td>Alert under defined loss policy; no credential leakage</td></tr><tr><td>Rendering</td><td>Model emits script, HTML or executable command</td><td>Displayed as inert data; no automatic execution</td></tr><tr><td>Retry</td><td>Client resubmits a paid request</td><td>Durable idempotency coordinator applies documented replay policy</td></tr><tr><td>Recovery</td><td>Held reservation exceeds reconciliation objective</td><td>Alert and audited investigation; no silent release</td></tr><tr><td>Secrets</td><td>Inspect static assets and logs</td><td>No provider keys, OTPs, bearer tokens or private prompts</td></tr><tr><td>Rollback</td><td>Registry version regresses quality</td><td>Restore approved version without weakening authorization</td></tr></table></div><h3>6.1 Operational objectives</h3><p>Define service objectives before launch: admission availability, successful-request latency, timeout rate, unresolved-reservation age and cost per accepted task. Set thresholds from measured staging traffic and the business risk profile. The chapter does not invent universal production percentages.</p><p>Alert on oldest unresolved reservation, repeated settlement errors, provider authorization failures and unexpected token growth. A model outage should degrade the AI feature while preserving identity, accounting records and ordinary application access.</p><h3>6.2 Known implementation traps</h3><p>An in-memory limiter is instance-local and cannot enforce a global tenant allowance. A provider API key scoped to a whole organization can exceed the authority needed by one application. A fallback model with different retention terms can violate a data-processing policy even when its output is correct. A provider response marked incomplete may include text that must not be accepted as a finished result. Setting a provider's store flag to false does not by itself establish contractual zero-data-retention coverage.</p><h2>7. Official provider and standards references</h2><p>- <a href="https://developers.openai.com/api/docs/models" target="_blank" rel="noopener noreferrer">OpenAI model catalog</a>: current model families and capability discovery.</p><p>- <a href="https://developers.openai.com/api/reference/resources/responses/methods/create" target="_blank" rel="noopener noreferrer">OpenAI Responses create reference</a>: provider request and response semantics.</p><p>- <a href="https://platform.claude.com/docs/en/models/overview" target="_blank" rel="noopener noreferrer">Claude model overview</a>: model IDs, capabilities and lifecycle.</p><p>- <a href="https://ai.google.dev/gemini-api/docs/models" target="_blank" rel="noopener noreferrer">Gemini model catalog</a>: model endpoints and modality-specific choices.</p><p>- <a href="https://developers.cloudflare.com/workers/wrangler/configuration/" target="_blank" rel="noopener noreferrer">Cloudflare Worker configuration</a>: deployment configuration.</p><p>- <a href="https://developers.cloudflare.com/workers/configuration/secrets/" target="_blank" rel="noopener noreferrer">Cloudflare Worker secrets</a>: runtime credential handling.</p><p>- <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Authentication Cheat Sheet</a>: identity control boundaries.</p><p>- <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Authorization Cheat Sheet</a>: permission checks and least privilege.</p><p>- <a href="https://mermaid.js.org/config/usage.html" target="_blank" rel="noopener noreferrer">Mermaid documentation</a>: editable diagram syntax and rendering.</p><h2>8. Chapter completion and next page</h2><p>Page 1 defines the lifecycle, trust boundaries, complete orchestration module, deterministic tests, policy configuration and deployment acceptance requirements. It does not assert that a public service has been provisioned or approved.</p><p>The next standalone chapter is <strong>Page 2 — Identity, Authentication, SSO, Sessions and Tenant Authorization</strong>. It will define the concrete gateway boundary used by this lifecycle. Ready to proceed to Page 2.</p></article><p>Next chapter: Identity, Authentication, SSO, Sessions and Tenant Authorization.</p></main><script type="module" src="./assets/chapter.js"></script></body></html>
