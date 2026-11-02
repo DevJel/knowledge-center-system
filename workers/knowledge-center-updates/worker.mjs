@@ -47,10 +47,10 @@ export async function inspectSource(url,previous,checkedAt,fetcher=fetch){
   return {...(previous||{}),url,status:"check_failed",checkedAt,error:message,lastSuccessAt:previous?.lastSuccessAt||null};
  }finally{clearTimeout(timer);}
 }
-export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch){
+export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch,options={}){
  const key="chapter:"+chapter.id,checkedAt=now.toISOString();
  const old=await env.UPDATE_STATE.get(key,"json");
- if(old?.checkedAt?.slice(0,10)===checkedAt.slice(0,10)&&old.sources?.every(source=>source.status!=="check_failed"))return old;
+ if(!options.force&&old?.checkedAt?.slice(0,10)===checkedAt.slice(0,10)&&old.sources?.every(source=>source.status!=="check_failed"))return old;
  const sources=[];
  // Sequential fetches keep the maximum outgoing connection count bounded.
  for(const url of chapter.references){
@@ -63,7 +63,7 @@ export async function refreshChapter(chapter,env,now=new Date(),fetcher=fetch){
  console.log(JSON.stringify({chapterId:chapter.id,status:record.status,sources:sources.length,failed:failures}));
  return record;
 }
-function json(value,status=200,origin=null){
+async function constantTimeTokenMatch(provided,expected){\n if(typeof provided!=="string"||typeof expected!=="string"||!expected)return false;\n const encode=value=>new TextEncoder().encode(value);\n const [a,b]=await Promise.all([crypto.subtle.digest("SHA-256",encode(provided)),crypto.subtle.digest("SHA-256",encode(expected))]);\n const aa=new Uint8Array(a),bb=new Uint8Array(b);let diff=0;for(let i=0;i<aa.length;i++)diff|=aa[i]^bb[i];return diff===0;\n}\nfunction json(value,status=200,origin=null){
  const headers={"Content-Type":"application/json; charset=utf-8","Cache-Control":"public, max-age=300","X-Content-Type-Options":"nosniff","Vary":"Origin"};
  if(origin)headers["Access-Control-Allow-Origin"]=origin;
  return new Response(JSON.stringify(value),{status,headers});
@@ -79,9 +79,9 @@ export default {
   const url=new URL(request.url),origin=request.headers.get("Origin");
   const origins=new Set(["https://app-bible.jelvan.pro","https://devjel.github.io"]);
   if(origin&&!origins.has(origin))return json({error:"origin_not_allowed"},403);
-  if(request.method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin||"https://app-bible.jelvan.pro","Access-Control-Allow-Methods":"GET, HEAD, OPTIONS","Vary":"Origin"}});
-  if(!["GET","HEAD"].includes(request.method))return json({error:"method_not_allowed"},405,origin);
-  if(url.pathname==="/health")return json({service:"knowledge-center-updates",version:"1.0.0",schedule:"0-25 0 * * *",timezone:"Asia/Kuala_Lumpur",localWindow:"08:00–08:25 daily",chapters:CHAPTERS.length,mode:"reference_outline_updates",editorialRewrite:false},200,origin);
+  if(request.method==="OPTIONS")return new Response(null,{status:204,headers:{"Access-Control-Allow-Origin":origin||"https://app-bible.jelvan.pro","Access-Control-Allow-Methods":"GET, HEAD, POST, OPTIONS","Access-Control-Allow-Headers":"Authorization, Content-Type","Vary":"Origin"}});
+  if(request.method==="POST"){\n   if(!url.pathname.startsWith("/v1/refresh/"))return json({error:"method_not_allowed"},405,origin);\n   if(!env.UPDATE_TRIGGER_TOKEN)return json({error:"manual_refresh_not_configured"},503,origin);\n   const supplied=(request.headers.get("Authorization")||"").replace(/^Bearer\\s+/i,"");\n   if(!await constantTimeTokenMatch(supplied,env.UPDATE_TRIGGER_TOKEN))return json({error:"unauthorized"},401,origin);\n   const id=url.pathname.slice("/v1/refresh/".length);\n   const chapter=CHAPTERS.find(item=>item.id===id);\n   if(!chapter)return json({error:"not_found"},404,origin);\n   const record=await refreshChapter(chapter,env,new Date(),fetch,{force:true});\n   return json({ ...record, trigger:"manual", editorialReviewRequired:true },200,origin);\n  }\n  if(!["GET","HEAD"].includes(request.method))return json({error:"method_not_allowed"},405,origin);
+  if(url.pathname==="/health")return json({service:"knowledge-center-updates",version:"1.1.0",schedule:"0-26 0 * * *",timezone:"Asia/Kuala_Lumpur",localWindow:"08:00–08:26 daily",chapters:CHAPTERS.length,mode:"daily_and_manual_reference_checks",manualRefresh:true,editorialRewrite:false},200,origin);
   if(url.pathname==="/v1/chapters")return json({chapters:CHAPTERS.map(({id,title,group,order})=>({id,title,group,minute:order}))},200,origin);
   const match=url.pathname.match(/^\/v1\/chapters\/([a-z0-9-]+)$/);
   const chapter=CHAPTERS.find(c=>c.id===match?.[1]);
