@@ -42,24 +42,6 @@ if(feed){const status=feed.querySelector(".feed-status"),results=feed.querySelec
     }
    }
   }
-  try{
-   const reviewResponse=await fetch(API+"/v1/reviews/"+encodeURIComponent(feed.dataset.chapterId),{signal:AbortSignal.timeout(8000),credentials:"omit"});
-   if(reviewResponse.ok){
-    const reviewData=await reviewResponse.json();
-    if(reviewData.reviews?.length){
-     addText(results,"h3","Editorial review signals","review-heading");
-     for(const review of reviewData.reviews.slice(0,5)){
-      const card=addText(results,"article","","source-update editorial-review");
-      addText(card,"p","Review required · "+formatDate(review.detectedAt),"source-state");
-      addText(card,"p",review.reason==="reference_outline_change_or_source_failure"?"A mapped source changed or could not be checked. Compare the source with the chapter before editing public guidance.":"Review the recorded source evidence.");
-      for(const signal of review.signals||[]){
-       const link=document.createElement("a");link.href=signal.url;link.target="_blank";link.rel="noopener noreferrer";link.textContent=signal.title||new URL(signal.url).hostname;card.append(link);
-       addText(card,"p",signal.status==="outline_changed"?"Source title or heading outline changed": "Source check failed: "+(signal.error||"unknown error"));
-       if(signal.headings?.length)addText(card,"p","Observed headings: "+signal.headings.join(" · "));
-      }
-     }
-    }else addText(results,"p","No editorial review signals have been recorded for this chapter.");
-   }
-  }catch{addText(results,"p","Editorial review signals are temporarily unavailable.");}
+
  }catch{status.textContent="Live source updates could not load. The complete chapter and static references remain available; retry later.";}
 }
