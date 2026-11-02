@@ -2,7 +2,7 @@
 
 ## Daily reference updater and learning paths
 
-The knowledge center has twenty-six distinct standalone chapters, plus the index alias. Chapters are organized into Foundations, Application Platform, AI Engineering, Operations & Quality, and Implementation Chapters. Each chapter has explicit related topics, mapped official references and a Daily Reference Updates panel.
+The knowledge center has twenty-seven distinct standalone chapters, plus the index alias. Chapters are organized into Foundations, Application Platform, AI Engineering, Operations & Quality, and Implementation Chapters. Each chapter has explicit related topics, mapped official references and a Daily Reference Updates panel.
 
 - [Worker Architecture & Implementation](worker-implementation.html)
 - [Daily update operations guide](docs/DAILY_UPDATES.md)
@@ -50,7 +50,7 @@ Serve the repository root with `python3 -m http.server 8080`, then open http://l
 
 ## Branding and navigation
 
-The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Twenty-four sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
+The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI - Knowledge Center”. Twenty-seven chapters have standalone shareable URLs. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
 
 ## Hosting status
 
