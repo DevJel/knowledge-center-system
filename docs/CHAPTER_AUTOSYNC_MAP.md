@@ -32,7 +32,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase1.html](../phase1.html)
 - Public page: https://app-bible.jelvan.pro/phase1.html
 - Group: Foundations
-- Daily slot: 01:00 UTC / 09:00 Asia/Kuala_Lumpur
+- Daily slot: 00:01 UTC / 08:01 Asia/Kuala_Lumpur
 - Registered references:
   - https://docs.github.com/en/issues
   - https://www.w3.org/WAI/WCAG22/quickref/
@@ -44,7 +44,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase2.html](../phase2.html)
 - Public page: https://app-bible.jelvan.pro/phase2.html
 - Group: Foundations
-- Daily slot: 02:00 UTC / 10:00 Asia/Kuala_Lumpur
+- Daily slot: 00:02 UTC / 08:02 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/workers/runtime-apis/bindings/
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
@@ -56,7 +56,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase3.html](../phase3.html)
 - Public page: https://app-bible.jelvan.pro/phase3.html
 - Group: Foundations
-- Daily slot: 03:00 UTC / 11:00 Asia/Kuala_Lumpur
+- Daily slot: 00:03 UTC / 08:03 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.openai.com/api/docs/guides/evals
   - https://developers.openai.com/api/docs/models
@@ -68,7 +68,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase4.html](../phase4.html)
 - Public page: https://app-bible.jelvan.pro/phase4.html
 - Group: Foundations
-- Daily slot: 04:00 UTC / 12:00 Asia/Kuala_Lumpur
+- Daily slot: 00:04 UTC / 08:04 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.openai.com/api/docs/guides/function-calling
   - https://platform.claude.com/docs/en/models/overview
@@ -80,7 +80,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase5.html](../phase5.html)
 - Public page: https://app-bible.jelvan.pro/phase5.html
 - Group: Foundations
-- Daily slot: 05:00 UTC / 13:00 Asia/Kuala_Lumpur
+- Daily slot: 00:05 UTC / 08:05 Asia/Kuala_Lumpur
 - Registered references:
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
   - https://docs.github.com/en/issues
@@ -92,7 +92,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase6.html](../phase6.html)
 - Public page: https://app-bible.jelvan.pro/phase6.html
 - Group: Foundations
-- Daily slot: 06:00 UTC / 14:00 Asia/Kuala_Lumpur
+- Daily slot: 00:06 UTC / 08:06 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/workers/wrangler/configuration/
   - https://docs.github.com/en/pages
@@ -104,7 +104,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [phase7.html](../phase7.html)
 - Public page: https://app-bible.jelvan.pro/phase7.html
 - Group: Foundations
-- Daily slot: 07:00 UTC / 15:00 Asia/Kuala_Lumpur
+- Daily slot: 00:07 UTC / 08:07 Asia/Kuala_Lumpur
 - Registered references:
   - https://opentelemetry.io/docs/concepts/signals/
   - https://developers.cloudflare.com/workers/platform/limits/
@@ -116,7 +116,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [appendices.html](../appendices.html)
 - Public page: https://app-bible.jelvan.pro/appendices.html
 - Group: Foundations
-- Daily slot: 08:00 UTC / 16:00 Asia/Kuala_Lumpur
+- Daily slot: 00:08 UTC / 08:08 Asia/Kuala_Lumpur
 - Registered references:
   - https://docs.github.com/en/get-started/writing-on-github
   - https://mermaid.js.org/syntax/flowchart.html
@@ -128,7 +128,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [databases.html](../databases.html)
 - Public page: https://app-bible.jelvan.pro/databases.html
 - Group: Application Platform
-- Daily slot: 09:00 UTC / 17:00 Asia/Kuala_Lumpur
+- Daily slot: 00:09 UTC / 08:09 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/d1/
   - https://developers.cloudflare.com/d1/reference/migrations/
@@ -141,7 +141,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [authentication.html](../authentication.html)
 - Public page: https://app-bible.jelvan.pro/authentication.html
 - Group: Application Platform
-- Daily slot: 10:00 UTC / 18:00 Asia/Kuala_Lumpur
+- Daily slot: 00:10 UTC / 08:10 Asia/Kuala_Lumpur
 - Registered references:
   - https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
   - https://openid.net/specs/openid-connect-core-1_0.html
@@ -153,7 +153,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [sessions.html](../sessions.html)
 - Public page: https://app-bible.jelvan.pro/sessions.html
 - Group: Application Platform
-- Daily slot: 11:00 UTC / 19:00 Asia/Kuala_Lumpur
+- Daily slot: 00:11 UTC / 08:11 Asia/Kuala_Lumpur
 - Registered references:
   - https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
@@ -165,7 +165,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [otp.html](../otp.html)
 - Public page: https://app-bible.jelvan.pro/otp.html
 - Group: Application Platform
-- Daily slot: 12:00 UTC / 20:00 Asia/Kuala_Lumpur
+- Daily slot: 00:12 UTC / 08:12 Asia/Kuala_Lumpur
 - Registered references:
   - https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html
   - https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
@@ -177,7 +177,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [email.html](../email.html)
 - Public page: https://app-bible.jelvan.pro/email.html
 - Group: Application Platform
-- Daily slot: 13:00 UTC / 21:00 Asia/Kuala_Lumpur
+- Daily slot: 00:13 UTC / 08:13 Asia/Kuala_Lumpur
 - Registered references:
   - https://docs.aws.amazon.com/ses/latest/dg/send-email-smtp.html
   - https://docs.aws.amazon.com/ses/latest/dg/smtp-connect.html
@@ -190,7 +190,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [apis.html](../apis.html)
 - Public page: https://app-bible.jelvan.pro/apis.html
 - Group: Application Platform
-- Daily slot: 14:00 UTC / 22:00 Asia/Kuala_Lumpur
+- Daily slot: 00:14 UTC / 08:14 Asia/Kuala_Lumpur
 - Registered references:
   - https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html
   - https://developers.cloudflare.com/workers/runtime-apis/request/
@@ -202,7 +202,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [infrastructure.html](../infrastructure.html)
 - Public page: https://app-bible.jelvan.pro/infrastructure.html
 - Group: Application Platform
-- Daily slot: 15:00 UTC / 23:00 Asia/Kuala_Lumpur
+- Daily slot: 00:15 UTC / 08:15 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/workers/configuration/secrets/
   - https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site
@@ -214,7 +214,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [queues.html](../queues.html)
 - Public page: https://app-bible.jelvan.pro/queues.html
 - Group: Application Platform
-- Daily slot: 16:00 UTC / 24:00 Asia/Kuala_Lumpur
+- Daily slot: 00:16 UTC / 08:16 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/queues/
   - https://developers.cloudflare.com/queues/configuration/delivery-delays/
@@ -226,7 +226,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [ai-security.html](../ai-security.html)
 - Public page: https://app-bible.jelvan.pro/ai-security.html
 - Group: AI Engineering
-- Daily slot: 17:00 UTC / 25:00 Asia/Kuala_Lumpur
+- Daily slot: 00:17 UTC / 08:17 Asia/Kuala_Lumpur
 - Registered references:
   - https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html
   - https://developers.openai.com/api/docs/guides/retrieval
@@ -238,7 +238,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [quality.html](../quality.html)
 - Public page: https://app-bible.jelvan.pro/quality.html
 - Group: Operations & Quality
-- Daily slot: 18:00 UTC / 26:00 Asia/Kuala_Lumpur
+- Daily slot: 00:18 UTC / 08:18 Asia/Kuala_Lumpur
 - Registered references:
   - https://www.w3.org/WAI/WCAG22/quickref/
   - https://docs.github.com/en/actions
@@ -250,7 +250,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [operations.html](../operations.html)
 - Public page: https://app-bible.jelvan.pro/operations.html
 - Group: Operations & Quality
-- Daily slot: 19:00 UTC / 27:00 Asia/Kuala_Lumpur
+- Daily slot: 00:19 UTC / 08:19 Asia/Kuala_Lumpur
 - Registered references:
   - https://opentelemetry.io/docs/concepts/signals/
   - https://developers.cloudflare.com/workers/observability/
@@ -262,7 +262,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [llm-selection.html](../llm-selection.html)
 - Public page: https://app-bible.jelvan.pro/llm-selection.html
 - Group: AI Engineering
-- Daily slot: 20:00 UTC / 28:00 Asia/Kuala_Lumpur
+- Daily slot: 00:20 UTC / 08:20 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.openai.com/api/docs/models
   - https://platform.claude.com/docs/en/models/overview
@@ -275,7 +275,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [ai-updates.html](../ai-updates.html)
 - Public page: https://app-bible.jelvan.pro/ai-updates.html
 - Group: AI Engineering
-- Daily slot: 21:00 UTC / 29:00 Asia/Kuala_Lumpur
+- Daily slot: 00:21 UTC / 08:21 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.openai.com/api/docs/deprecations
   - https://platform.claude.com/docs/en/models/overview
@@ -288,7 +288,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [model-routing.html](../model-routing.html)
 - Public page: https://app-bible.jelvan.pro/model-routing.html
 - Group: AI Engineering
-- Daily slot: 22:00 UTC / 30:00 Asia/Kuala_Lumpur
+- Daily slot: 00:22 UTC / 08:22 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.openai.com/api/reference/resources/responses/methods/create
   - https://developers.openai.com/api/docs/models
@@ -300,7 +300,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [mermaid-diagrams.html](../mermaid-diagrams.html)
 - Public page: https://app-bible.jelvan.pro/mermaid-diagrams.html
 - Group: Operations & Quality
-- Daily slot: 23:00 UTC / 31:00 Asia/Kuala_Lumpur
+- Daily slot: 00:23 UTC / 08:23 Asia/Kuala_Lumpur
 - Registered references:
   - https://mermaid.js.org/syntax/flowchart.html
   - https://mermaid.js.org/syntax/sequenceDiagram.html
@@ -313,7 +313,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [chapter-01-production-ai-architecture.html](../chapter-01-production-ai-architecture.html)
 - Public page: https://app-bible.jelvan.pro/chapter-01-production-ai-architecture.html
 - Group: Implementation Chapters
-- Daily slot: 24:00 UTC / 32:00 Asia/Kuala_Lumpur
+- Daily slot: 00:24 UTC / 08:24 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.openai.com/api/reference/resources/responses/methods/create
   - https://developers.cloudflare.com/workers/runtime-apis/bindings/
@@ -326,7 +326,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [worker-implementation.html](../worker-implementation.html)
 - Public page: https://app-bible.jelvan.pro/worker-implementation.html
 - Group: Implementation Chapters
-- Daily slot: 25:00 UTC / 33:00 Asia/Kuala_Lumpur
+- Daily slot: 00:25 UTC / 08:25 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/workers/configuration/cron-triggers/
   - https://developers.cloudflare.com/workers/runtime-apis/handlers/scheduled/
@@ -339,7 +339,7 @@ This document maps every public HTML chapter to the exact official reference URL
 - Page: [web-application-engineering.html](../web-application-engineering.html)
 - Public page: https://app-bible.jelvan.pro/web-application-engineering.html
 - Group: Application Engineering
-- Daily slot: 26:00 UTC / 34:00 Asia/Kuala_Lumpur
+- Daily slot: 00:26 UTC / 08:26 Asia/Kuala_Lumpur
 - Registered references:
   - https://developers.cloudflare.com/workers/
   - https://duo.com/docs/duoweb
