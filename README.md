@@ -5,6 +5,10 @@ A static, searchable development playbook hosted with GitHub Pages. This applica
 Custom domain: https://app-bible.jelvan.pro  
 Default Pages URL: https://devjel.github.io/knowledge-center-system/
 
+## Complete standalone HTML chapters
+
+Every topic HTML file now embeds its full chapter content directly in the document. Reading the content does not require React, a content API, or JavaScript. The optional shared script adds clipboard controls, theme switching and Mermaid previews. All twenty-four topic pages and the detailed architecture chapter follow the same eleven-section pattern, with topic-specific mechanics, code and process diagrams.
+
 ## Separate HTML pages
 
 Each topic now has its own HTML document and URL; the main page displays Overview only. Shared assets live in assets/. Navigation loads a new document rather than scrolling through all topics. Legacy index.html hash links redirect to the matching HTML page.
