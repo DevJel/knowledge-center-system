@@ -13,7 +13,7 @@ if(feed){const status=feed.querySelector(".feed-status"),results=feed.querySelec
    status.textContent="Last attempted check: "+formatDate(record.checkedAt)+". "+(age>36*3600000?"Result is stale; inspect the scheduled Worker. ":record.status==="checked"?"All mapped sources were checked. ":"Some sources could not be checked. ")+"Last fully successful chapter check: "+formatDate(record.lastSuccessfulCheckAt)+".";
    status.classList.toggle("feed-stale",age>36*3600000||record.status!=="checked");
   }
-  const labels={pending:"Awaiting first check",baseline:"Initial source baseline",unchanged:"No outline change detected",outline_changed:"Source outline changed — review needed",check_failed:"Source check failed"};
+  const labels={pending:"Awaiting first check",baseline:"Initial source baseline",unchanged:"No outline change detected",outline_changed:"Source headings changed — review needed",content_changed:"Source content changed — review needed",check_failed:"Source check failed"};
   for(const source of record.sources||[]){const card=addText(results,"article","", "source-update");const anchor=document.createElement("a");const target=new URL(source.url);if(target.protocol!=="https:")continue;anchor.href=target.href;anchor.target="_blank";anchor.rel="noopener noreferrer";anchor.textContent=source.title||target.hostname;card.append(anchor);
    addText(card,"p",labels[source.status]||"Unknown source state","source-state");
    addText(card,"p",target.href,"source-url");
@@ -38,7 +38,7 @@ if(feed){const status=feed.querySelector(".feed-status"),results=feed.querySelec
       if(signal.error)addText(panel,"p","Check issue: "+signal.error);
       if(signal.headings?.length)addText(panel,"p","Observed headings: "+signal.headings.join(" · "));
      }
-     addText(panel,"p","A source change is a review signal, not an automatic instruction to rewrite technical guidance. Verify the source content and affected implementation before editing.");
+     addText(panel,"p","A detected source change is an editorial review signal, not an automatic instruction to rewrite technical guidance. Compare the official source, identify affected procedures and code examples, then approve a documented chapter revision.");
     }
    }
   }
