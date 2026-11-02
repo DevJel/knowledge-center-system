@@ -52,3 +52,9 @@ No account, AI execution, email sending, database or backend is implemented. Exa
 ## Troubleshooting
 
 If navigation is missing, clear the search. If the icon is stale, hard-refresh or reopen the tab. If the page is blank, check the browser console and serve through HTTP. For custom-domain or certificate failures, follow DEPLOYMENT.md.
+
+## AI research, diagrams and copy controls
+
+The site now has twenty-four navigation sections. AI research is dated 2 November 2026; it does not refresh automatically. See [AI research](AI_RESEARCH.md) and [diagram source](DIAGRAMS.md).
+
+Every section has Copy section and Copy link controls. Each code block has its own Copy button. Mermaid diagrams show both a rendered preview and source; copy the source into a fenced mermaid block for GitHub. If clipboard access fails, select the visible text manually. Diagram previews require the pinned external Mermaid module; readable source remains if it cannot load. The site logo remains unchanged.
