@@ -1,3 +1,35 @@
+# MASTER AI — Knowledge Center
+
+A static, searchable development playbook hosted with GitHub Pages. This application is a documentation reader. The agents, integrations, metrics and pricing described in the playbook are reference examples, not running services or measured results.
+
+Custom domain: https://app-bible.jelvan.pro  
+Default Pages URL: https://devjel.github.io/knowledge-center-system/
+
+## Guides
+
+- [User guide and section reference](docs/USER_GUIDE.md)
+- [Deployment, DNS, HTTPS and rollback](docs/DEPLOYMENT.md)
+- [Architecture and maintenance](docs/ARCHITECTURE.md)
+- [Changelog](CHANGELOG.md)
+
+## Local preview
+
+Serve the repository root with `python3 -m http.server 8080`, then open http://localhost:8080. No build, package installation, API key or database is required.
+
+## Branding and navigation
+
+The favicon reproduces the red hexagon and three dots of the application logo. Browser titles follow “Section name | MASTER AI Playbook”. Nine sections have shareable hash links. Search filters section names; Ctrl+K or Command+K focuses search. Mobile navigation and a color-theme toggle are available.
+
+## Hosting status
+
+GitHub Actions publishes pushes to main. Cloudflare provides DNS only, with app-bible.jelvan.pro pointing to devjel.github.io. A repository CNAME file records the intended domain. Actions publishing still requires the custom domain to be configured in GitHub Settings → Pages, followed by certificate validation and Enforce HTTPS. DNS alone does not confirm that the custom domain is live.
+
+---
+
+## Original reference playbook
+
+The material below is preserved as reference guidance. Validate technology choices, estimates and thresholds for each implementation.
+
 # MASTER AI • Multi-Agent Operating System
 
 ### Production-Grade Development Playbook & README
