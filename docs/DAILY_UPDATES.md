@@ -111,7 +111,7 @@ The Worker source supports:
 |---|---|
 | POST /v1/refresh/{chapterId} | Force-check one registered chapter immediately |
 
-This endpoint requires a Worker secret named UPDATE_TRIGGER_TOKEN and a matching Authorization: Bearer header. It returns 503 when the secret is not configured, 401 for an invalid token, 404 for an unknown chapter and a refresh result for an authorized request.
+This endpoint requires a Worker secret named UPDATE_TRIGGER_TOKEN and a matching Authorization: Bearer header. It returns 503 when the secret is not configured, 401 for an invalid token, 404 for an unknown chapter and a refresh result for an authorized request. The Cloudflare secret inventory was checked during this documentation update and returned no configured secrets. Therefore the scheduled daily checks remain configured, but authenticated on-demand refresh is not yet enabled; provision UPDATE_TRIGGER_TOKEN securely before treating that route as operational.
 
 Example operator command:
 
