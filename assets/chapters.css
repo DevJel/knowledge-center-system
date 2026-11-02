@@ -1708,3 +1708,16 @@ dialog label{display:block;font-size:12px;color:var(--muted);margin:20px 0 8px}
 .learning-path{font:12px ui-monospace,monospace;color:var(--accent)}
 .reference-feed{border:1px solid var(--border);border-radius:12px;padding:22px;background:var(--surface)}.feed-status{font-size:13px;margin-top:0}.feed-stale{color:var(--accent)}.feed-results{display:grid;gap:12px}.source-update{border-top:1px solid var(--border);padding-top:14px}.source-update>a{font-weight:650;font-size:13px}.source-update p{font-size:12px;margin:7px 0;color:var(--muted)}.source-url{overflow-wrap:anywhere}.reference-scope{font-size:12px;color:var(--muted)}
 @media(max-width:650px){.related-grid{grid-template-columns:1fr}.reference-feed{padding:16px}}@media print{.reference-feed{background:white}.related-card{break-inside:avoid}}
+
+
+/* Interactive documentation controls */
+.audit-checklist,.deploy-status{margin-top:24px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.audit-checklist h3{margin:0 0 8px}.audit-checklist p,.deploy-status p,.deploy-status small{font-size:12px;color:var(--muted)}
+.audit-items{display:grid;gap:8px}.audit-items label{display:flex;gap:11px;align-items:flex-start;padding:9px;border:1px solid var(--border);border-radius:7px;cursor:pointer}.audit-items input{margin-top:5px;accent-color:var(--accent);flex:none}
+.code-switcher,.zoom-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 5px}.code-switcher button,.zoom-tools button,.diagram-zoom-button{font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--fg)}
+.code-switcher [aria-selected=true]{border-color:var(--accent);font-weight:700}.diagram-zoom-button{margin:8px 0}
+.mermaid-zoom{width:min(95vw,1400px);max-width:none;height:90vh;max-height:90vh;padding:14px;background:var(--surface);color:var(--fg)}
+.zoom-viewport{height:calc(100% - 55px);width:100%;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:8px}
+.zoom-inner{transform-origin:top left;width:max-content;min-width:100%;padding:20px}.zoom-inner svg{max-width:none!important;height:auto!important}
+.search-target{outline:3px solid var(--accent);outline-offset:6px;border-radius:4px}
+@media print{.audit-checklist,.code-switcher,.diagram-zoom-button,.deploy-status,.mermaid-zoom{display:none!important}}
