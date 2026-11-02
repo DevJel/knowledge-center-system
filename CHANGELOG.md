@@ -9,7 +9,9 @@
 - Expanded the daily update operations guide with source comparison boundaries, status meanings, endpoints, secret handling, review procedure, test commands and separate deployment steps.
 - Removed duplicate editorial review requests from the chapter update panel and improved change-history accounting for body-content changes.
 - Deployed the updated Cloudflare reference Worker with the corrected API route matchers, bounded content fingerprints and editorial review signals. The existing Cron schedule and KV binding are retained.
-- Static Pages validation and deployment are running through the configured publishing workflow; final job result is being checked.
+- Static Pages validation and deployment completed successfully: chapter registry, search index, Worker tests, documentation structure, JavaScript validation, artifact upload and Pages deployment all passed.
+- The on-demand refresh endpoint remains protected and disabled until UPDATE_TRIGGER_TOKEN is provisioned as a Worker secret; scheduled daily source checks remain configured.
+- Custom-domain rendering was not independently browser-verified in this release.
 
 
 ## 2.4.0 — 3 November 2026
